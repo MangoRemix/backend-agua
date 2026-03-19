@@ -7,6 +7,9 @@ public class ComunaCreateDto
     [Required]
     public string Nombre { get; set; } = string.Empty;
 
+    public string? LiderNombre { get; set; }
+    public string? LiderCedula { get; set; }
+
     [Required]
     public Guid ParroquiaId { get; set; }
 }

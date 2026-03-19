@@ -4,6 +4,8 @@ public class Comuna
 {
     public Guid Id { get; set; }
     public string Nombre { get; set; } = string.Empty;
+    public string? LiderNombre { get; set; }
+    public string? LiderCedula { get; set; }
 
     // Relación: Una Comuna pertenece a una Parroquia
     public Guid ParroquiaId { get; set; }

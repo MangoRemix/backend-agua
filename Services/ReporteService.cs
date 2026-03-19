@@ -163,6 +163,7 @@ public class ReporteService : IReporteService
     {
         var reporte = await _context.Reportes
             .Include(r => r.Comunidad)
+                .ThenInclude(c => c.Comuna)
             .Include(r => r.Usuario)
             .Include(r => r.PersonasAfectadas)
             .FirstOrDefaultAsync(r => r.Id == id);
@@ -176,6 +177,7 @@ public class ReporteService : IReporteService
     {
         var reportes = await _context.Reportes
             .Include(r => r.Comunidad)
+                .ThenInclude(c => c.Comuna)
             .Include(r => r.Usuario)
             .Where(r => r.ComunidadId == comunidadId)
             .OrderByDescending(r => r.FechaCreacion)
@@ -190,72 +192,79 @@ public class ReporteService : IReporteService
         {
             Id = reporte.Id,
             ComunidadId = reporte.ComunidadId,
-            ComunidadNombre = reporte.Comunidad?.Nombre,
             UsuarioId = reporte.UsuarioId,
             UsuarioNombre = $"{reporte.Usuario?.Nombre} {reporte.Usuario?.Apellido}",
+            
+            ComunaNombre = reporte.Comunidad?.Comuna?.Nombre,
+            ComunaLiderNombre = reporte.Comunidad?.Comuna?.LiderNombre,
+            ComunaLiderCedula = reporte.Comunidad?.Comuna?.LiderCedula,
+            ComunidadNombre = reporte.Comunidad?.Nombre,
+            ComunidadLiderNombre = reporte.Comunidad?.LiderNombre,
+            ComunidadLiderCedula = reporte.Comunidad?.LiderCedula,
+
             FechaCreacion = reporte.FechaCreacion,
             Estatus = reporte.Estatus.ToString(),
             
-            LlegaPorTuberia = reporte.LlegaPorTuberia,
-            HorasSuministro = reporte.HorasSuministro,
-            Caudal = reporte.Caudal?.ToString(),
-            
-            RecibeCisterna = reporte.RecibeCisterna,
-            LitrosCisterna = reporte.LitrosCisterna,
-            TipoCisterna = reporte.TipoCisterna?.ToString(),
-            
-            TieneTanque = reporte.TieneTanque,
-            TipoTanque = reporte.TipoTanque?.ToString(),
-            
-            FamiliasBeneficiadas = reporte.FamiliasBeneficiadas,
-            ApoyoAdicionalLitros = reporte.ApoyoAdicionalLitros,
-
-            // Paso 2: Incidencias
-            TieneVentaIlegal = reporte.TieneVentaIlegal,
-            ChoferNombreApellido = reporte.ChoferNombreApellido,
-            ChoferCedula = reporte.ChoferCedula,
-            VehiculoMarcaModelo = reporte.VehiculoMarcaModelo,
-            VehiculoPlaca = reporte.VehiculoPlaca,
-            VehiculoColor = reporte.VehiculoColor,
-
-            TieneTrancas = reporte.TieneTrancas,
-            TrancaPropiciaNombre = reporte.TrancaPropiciaNombre,
-            TrancaLugar = reporte.TrancaLugar,
-            TrancaDuracion = reporte.TrancaDuracion,
-
-            TieneConflictos = reporte.TieneConflictos,
-            ConflictosExplicacion = reporte.ConflictosExplicacion,
-
-            TieneFugas = reporte.TieneFugas,
-            FugaLugar = reporte.FugaLugar,
-            FugaTipo = reporte.FugaTipo?.ToString(),
-
-            // Paso 3: Salud
-            TieneDiarrea = reporte.TieneDiarrea,
-            CantidadCasosDiarrea = reporte.CantidadCasosDiarrea,
-            TieneVomitos = reporte.TieneVomitos,
-            TieneDolorAbdominal = reporte.TieneDolorAbdominal,
-            PersonasAfectadas = reporte.PersonasAfectadas.Select(p => new PersonaAfectadaDto
+            Suministro = new ReporteSuministroDto
             {
-                Nombre = p.Nombre,
-                Apellido = p.Apellido,
-                Edad = p.Edad,
-                Cedula = p.Cedula,
-                Condicion = p.Condicion
-            }).ToList(),
+                LlegaPorTuberia = reporte.LlegaPorTuberia,
+                HorasSuministro = reporte.HorasSuministro,
+                Caudal = reporte.Caudal?.ToString(),
+                RecibeCisterna = reporte.RecibeCisterna,
+                LitrosCisterna = reporte.LitrosCisterna,
+                TipoCisterna = reporte.TipoCisterna?.ToString(),
+                TieneTanque = reporte.TieneTanque,
+                TipoTanque = reporte.TipoTanque?.ToString(),
+                FamiliasBeneficiadas = reporte.FamiliasBeneficiadas,
+                ApoyoAdicionalLitros = reporte.ApoyoAdicionalLitros
+            },
 
-            // Paso 4: Participación Territorial
-            TienePartido = reporte.TienePartido,
-            PartidoNombre = reporte.Partido?.ToString(),
-            
-            TieneAlcaldia = reporte.TieneAlcaldia,
-            DetalleAlcaldia = reporte.DetalleAlcaldia,
-            
-            TieneGobernacion = reporte.TieneGobernacion,
-            DetalleGobernacion = reporte.DetalleGobernacion,
-            
-            TieneInstitucionNacional = reporte.TieneInstitucionNacional,
-            DetalleInstitucionNacional = reporte.DetalleInstitucionNacional
+            Incidencias = new ReporteIncidenciasDto
+            {
+                TieneVentaIlegal = reporte.TieneVentaIlegal,
+                ChoferNombreApellido = reporte.ChoferNombreApellido,
+                ChoferCedula = reporte.ChoferCedula,
+                VehiculoMarcaModelo = reporte.VehiculoMarcaModelo,
+                VehiculoPlaca = reporte.VehiculoPlaca,
+                VehiculoColor = reporte.VehiculoColor,
+                TieneTrancas = reporte.TieneTrancas,
+                TrancaPropiciaNombre = reporte.TrancaPropiciaNombre,
+                TrancaLugar = reporte.TrancaLugar,
+                TrancaDuracion = reporte.TrancaDuracion,
+                TieneConflictos = reporte.TieneConflictos,
+                ConflictosExplicacion = reporte.ConflictosExplicacion,
+                TieneFugas = reporte.TieneFugas,
+                FugaLugar = reporte.FugaLugar,
+                FugaTipo = reporte.FugaTipo?.ToString()
+            },
+
+            Salud = new ReporteSaludDto
+            {
+                TieneDiarrea = reporte.TieneDiarrea,
+                CantidadCasosDiarrea = reporte.CantidadCasosDiarrea,
+                TieneVomitos = reporte.TieneVomitos,
+                TieneDolorAbdominal = reporte.TieneDolorAbdominal,
+                PersonasAfectadas = reporte.PersonasAfectadas.Select(p => new PersonaAfectadaDto
+                {
+                    Nombre = p.Nombre,
+                    Apellido = p.Apellido,
+                    Edad = p.Edad,
+                    Cedula = p.Cedula,
+                    Condicion = p.Condicion
+                }).ToList()
+            },
+
+            Participacion = new ReporteParticipacionDto
+            {
+                TienePartido = reporte.TienePartido,
+                PartidoNombre = reporte.Partido?.ToString(),
+                TieneAlcaldia = reporte.TieneAlcaldia,
+                DetalleAlcaldia = reporte.DetalleAlcaldia,
+                TieneGobernacion = reporte.TieneGobernacion,
+                DetalleGobernacion = reporte.DetalleGobernacion,
+                TieneInstitucionNacional = reporte.TieneInstitucionNacional,
+                DetalleInstitucionNacional = reporte.DetalleInstitucionNacional
+            }
         };
     }
 }

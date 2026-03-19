@@ -76,6 +76,9 @@ var app = builder.Build();
 // Seed the database
 using (var scope = app.Services.CreateScope())
 {
+    MunicipioSeeder.Initialize(scope.ServiceProvider);
+    ParroquiaSeeder.Initialize(scope.ServiceProvider);
+    ComunaSeeder.Initialize(scope.ServiceProvider);
     UsuarioSeeder.Initialize(scope.ServiceProvider);
 }
 

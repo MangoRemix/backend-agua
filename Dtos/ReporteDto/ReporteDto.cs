@@ -6,13 +6,28 @@ public class ReporteDto
 {
     public Guid Id { get; set; }
     public Guid ComunidadId { get; set; }
-    public string? ComunidadNombre { get; set; }
     public Guid UsuarioId { get; set; }
     public string? UsuarioNombre { get; set; }
+    
+    // Información Territorial
+    public string? ComunaNombre { get; set; }
+    public string? ComunaLiderNombre { get; set; }
+    public string? ComunaLiderCedula { get; set; }
+    public string? ComunidadNombre { get; set; }
+    public string? ComunidadLiderNombre { get; set; }
+    public string? ComunidadLiderCedula { get; set; }
+
     public DateTime FechaCreacion { get; set; }
     public string Estatus { get; set; } = string.Empty;
 
-    // Suministro de Agua
+    public ReporteSuministroDto Suministro { get; set; } = new();
+    public ReporteIncidenciasDto Incidencias { get; set; } = new();
+    public ReporteSaludDto Salud { get; set; } = new();
+    public ReporteParticipacionDto Participacion { get; set; } = new();
+}
+
+public class ReporteSuministroDto
+{
     public bool LlegaPorTuberia { get; set; }
     public int? HorasSuministro { get; set; }
     public string? Caudal { get; set; }
@@ -23,8 +38,10 @@ public class ReporteDto
     public string? TipoTanque { get; set; }
     public int FamiliasBeneficiadas { get; set; }
     public int? ApoyoAdicionalLitros { get; set; }
+}
 
-    // Paso 2: Incidencias
+public class ReporteIncidenciasDto
+{
     public bool TieneVentaIlegal { get; set; }
     public string? ChoferNombreApellido { get; set; }
     public string? ChoferCedula { get; set; }
@@ -43,15 +60,19 @@ public class ReporteDto
     public bool TieneFugas { get; set; }
     public string? FugaLugar { get; set; }
     public string? FugaTipo { get; set; }
+}
 
-    // Paso 3: Salud
+public class ReporteSaludDto
+{
     public bool TieneDiarrea { get; set; }
     public int CantidadCasosDiarrea { get; set; }
     public bool TieneVomitos { get; set; }
     public bool TieneDolorAbdominal { get; set; }
     public List<PersonaAfectadaDto> PersonasAfectadas { get; set; } = new();
+}
 
-    // Paso 4: Participación Territorial
+public class ReporteParticipacionDto
+{
     public bool TienePartido { get; set; }
     public string? PartidoNombre { get; set; }
 

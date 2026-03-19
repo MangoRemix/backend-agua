@@ -25,6 +25,8 @@ public class ComunaService : IComunaService
         {
             Id = c.Id,
             Nombre = c.Nombre,
+            LiderNombre = c.LiderNombre,
+            LiderCedula = c.LiderCedula,
             ParroquiaId = c.ParroquiaId,
             ParroquiaNombre = c.Parroquia.Nombre
         });
@@ -42,6 +44,8 @@ public class ComunaService : IComunaService
         {
             Id = comuna.Id,
             Nombre = comuna.Nombre,
+            LiderNombre = comuna.LiderNombre,
+            LiderCedula = comuna.LiderCedula,
             ParroquiaId = comuna.ParroquiaId,
             ParroquiaNombre = comuna.Parroquia.Nombre
         };
@@ -69,6 +73,8 @@ public class ComunaService : IComunaService
         {
             Id = Guid.NewGuid(),
             Nombre = createDto.Nombre,
+            LiderNombre = createDto.LiderNombre,
+            LiderCedula = createDto.LiderCedula,
             ParroquiaId = createDto.ParroquiaId
         };
 
@@ -84,6 +90,8 @@ public class ComunaService : IComunaService
         if (comuna == null) return null;
 
         comuna.Nombre = updateDto.Nombre;
+        comuna.LiderNombre = updateDto.LiderNombre;
+        comuna.LiderCedula = updateDto.LiderCedula;
         comuna.ParroquiaId = updateDto.ParroquiaId;
 
         await _context.SaveChangesAsync();
