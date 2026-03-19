@@ -19,6 +19,8 @@ builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IMunicipioService, MunicipioService>();
 builder.Services.AddScoped<IParroquiaService, ParroquiaService>();
 builder.Services.AddScoped<IComunaService, ComunaService>();
+builder.Services.AddScoped<IComunidadService, ComunidadService>();
+builder.Services.AddScoped<IReporteService, ReporteService>();
 
 var jwtSettings = builder.Configuration.GetSection("Jwt");
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)

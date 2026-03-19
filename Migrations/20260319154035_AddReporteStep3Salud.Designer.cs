@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using backend_agua.Infraestructure.Database;
@@ -11,9 +12,11 @@ using backend_agua.Infraestructure.Database;
 namespace backend_agua.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260319154035_AddReporteStep3Salud")]
+    partial class AddReporteStep3Salud
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -158,15 +161,6 @@ namespace backend_agua.Migrations
                     b.Property<string>("ConflictosExplicacion")
                         .HasColumnType("text");
 
-                    b.Property<string>("DetalleAlcaldia")
-                        .HasColumnType("text");
-
-                    b.Property<string>("DetalleGobernacion")
-                        .HasColumnType("text");
-
-                    b.Property<string>("DetalleInstitucionNacional")
-                        .HasColumnType("text");
-
                     b.Property<int>("Estatus")
                         .HasColumnType("integer");
 
@@ -191,13 +185,7 @@ namespace backend_agua.Migrations
                     b.Property<bool>("LlegaPorTuberia")
                         .HasColumnType("boolean");
 
-                    b.Property<int?>("Partido")
-                        .HasColumnType("integer");
-
                     b.Property<bool>("RecibeCisterna")
-                        .HasColumnType("boolean");
-
-                    b.Property<bool>("TieneAlcaldia")
                         .HasColumnType("boolean");
 
                     b.Property<bool>("TieneConflictos")
@@ -210,15 +198,6 @@ namespace backend_agua.Migrations
                         .HasColumnType("boolean");
 
                     b.Property<bool>("TieneFugas")
-                        .HasColumnType("boolean");
-
-                    b.Property<bool>("TieneGobernacion")
-                        .HasColumnType("boolean");
-
-                    b.Property<bool>("TieneInstitucionNacional")
-                        .HasColumnType("boolean");
-
-                    b.Property<bool>("TienePartido")
                         .HasColumnType("boolean");
 
                     b.Property<bool>("TieneTanque")

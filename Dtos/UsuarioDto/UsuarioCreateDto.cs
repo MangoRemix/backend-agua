@@ -27,4 +27,6 @@ public class UsuarioCreateDto
     
     [Required]
     public StatusUsuario Status { get; set; }
+    
+    public Guid? ComunidadId { get; set; }
 }

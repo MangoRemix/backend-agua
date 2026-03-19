@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using backend_agua.Infraestructure.Database;
@@ -11,9 +12,11 @@ using backend_agua.Infraestructure.Database;
 namespace backend_agua.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260319145420_AddReporteStep1")]
+    partial class AddReporteStep1
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -97,40 +100,6 @@ namespace backend_agua.Migrations
                     b.ToTable("Parroquias");
                 });
 
-            modelBuilder.Entity("backend_agua.Models.PersonaAfectada", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("Apellido")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("Cedula")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<int>("Condicion")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("Edad")
-                        .HasColumnType("integer");
-
-                    b.Property<string>("Nombre")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<Guid>("ReporteId")
-                        .HasColumnType("uuid");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ReporteId");
-
-                    b.ToTable("PersonasAfectadas");
-                });
-
             modelBuilder.Entity("backend_agua.Models.Reporte", b =>
                 {
                     b.Property<Guid>("Id")
@@ -140,32 +109,11 @@ namespace backend_agua.Migrations
                     b.Property<int?>("ApoyoAdicionalLitros")
                         .HasColumnType("integer");
 
-                    b.Property<int>("CantidadCasosDiarrea")
-                        .HasColumnType("integer");
-
                     b.Property<int?>("Caudal")
                         .HasColumnType("integer");
 
-                    b.Property<string>("ChoferCedula")
-                        .HasColumnType("text");
-
-                    b.Property<string>("ChoferNombreApellido")
-                        .HasColumnType("text");
-
                     b.Property<Guid>("ComunidadId")
                         .HasColumnType("uuid");
-
-                    b.Property<string>("ConflictosExplicacion")
-                        .HasColumnType("text");
-
-                    b.Property<string>("DetalleAlcaldia")
-                        .HasColumnType("text");
-
-                    b.Property<string>("DetalleGobernacion")
-                        .HasColumnType("text");
-
-                    b.Property<string>("DetalleInstitucionNacional")
-                        .HasColumnType("text");
 
                     b.Property<int>("Estatus")
                         .HasColumnType("integer");
@@ -176,12 +124,6 @@ namespace backend_agua.Migrations
                     b.Property<DateTime>("FechaCreacion")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<string>("FugaLugar")
-                        .HasColumnType("text");
-
-                    b.Property<int?>("FugaTipo")
-                        .HasColumnType("integer");
-
                     b.Property<int?>("HorasSuministro")
                         .HasColumnType("integer");
 
@@ -191,46 +133,10 @@ namespace backend_agua.Migrations
                     b.Property<bool>("LlegaPorTuberia")
                         .HasColumnType("boolean");
 
-                    b.Property<int?>("Partido")
-                        .HasColumnType("integer");
-
                     b.Property<bool>("RecibeCisterna")
                         .HasColumnType("boolean");
 
-                    b.Property<bool>("TieneAlcaldia")
-                        .HasColumnType("boolean");
-
-                    b.Property<bool>("TieneConflictos")
-                        .HasColumnType("boolean");
-
-                    b.Property<bool>("TieneDiarrea")
-                        .HasColumnType("boolean");
-
-                    b.Property<bool>("TieneDolorAbdominal")
-                        .HasColumnType("boolean");
-
-                    b.Property<bool>("TieneFugas")
-                        .HasColumnType("boolean");
-
-                    b.Property<bool>("TieneGobernacion")
-                        .HasColumnType("boolean");
-
-                    b.Property<bool>("TieneInstitucionNacional")
-                        .HasColumnType("boolean");
-
-                    b.Property<bool>("TienePartido")
-                        .HasColumnType("boolean");
-
                     b.Property<bool>("TieneTanque")
-                        .HasColumnType("boolean");
-
-                    b.Property<bool>("TieneTrancas")
-                        .HasColumnType("boolean");
-
-                    b.Property<bool>("TieneVentaIlegal")
-                        .HasColumnType("boolean");
-
-                    b.Property<bool>("TieneVomitos")
                         .HasColumnType("boolean");
 
                     b.Property<int?>("TipoCisterna")
@@ -239,26 +145,8 @@ namespace backend_agua.Migrations
                     b.Property<int?>("TipoTanque")
                         .HasColumnType("integer");
 
-                    b.Property<string>("TrancaDuracion")
-                        .HasColumnType("text");
-
-                    b.Property<string>("TrancaLugar")
-                        .HasColumnType("text");
-
-                    b.Property<string>("TrancaPropiciaNombre")
-                        .HasColumnType("text");
-
                     b.Property<Guid>("UsuarioId")
                         .HasColumnType("uuid");
-
-                    b.Property<string>("VehiculoColor")
-                        .HasColumnType("text");
-
-                    b.Property<string>("VehiculoMarcaModelo")
-                        .HasColumnType("text");
-
-                    b.Property<string>("VehiculoPlaca")
-                        .HasColumnType("text");
 
                     b.HasKey("Id");
 
@@ -346,17 +234,6 @@ namespace backend_agua.Migrations
                     b.Navigation("Municipio");
                 });
 
-            modelBuilder.Entity("backend_agua.Models.PersonaAfectada", b =>
-                {
-                    b.HasOne("backend_agua.Models.Reporte", "Reporte")
-                        .WithMany("PersonasAfectadas")
-                        .HasForeignKey("ReporteId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Reporte");
-                });
-
             modelBuilder.Entity("backend_agua.Models.Reporte", b =>
                 {
                     b.HasOne("backend_agua.Models.Comunidad", "Comunidad")
@@ -403,11 +280,6 @@ namespace backend_agua.Migrations
             modelBuilder.Entity("backend_agua.Models.Parroquia", b =>
                 {
                     b.Navigation("Comunas");
-                });
-
-            modelBuilder.Entity("backend_agua.Models.Reporte", b =>
-                {
-                    b.Navigation("PersonasAfectadas");
                 });
 #pragma warning restore 612, 618
         }

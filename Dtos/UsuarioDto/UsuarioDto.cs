@@ -12,4 +12,6 @@ public class UsuarioDto
     public string? Telefono { get; set; }
     public UsuarioRol Rol { get; set; }
     public StatusUsuario Status { get; set; }
+    public Guid? ComunidadId { get; set; }
+    public string? ComunidadNombre { get; set; }
 }

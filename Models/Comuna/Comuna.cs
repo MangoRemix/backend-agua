@@ -8,4 +8,7 @@ public class Comuna
     // Relación: Una Comuna pertenece a una Parroquia
     public Guid ParroquiaId { get; set; }
     public Parroquia Parroquia { get; set; } = null!;
+
+    // Relación: Una Comuna tiene muchas Comunidades
+    public ICollection<Comunidad> Comunidades { get; set; } = new List<Comunidad>();
 }

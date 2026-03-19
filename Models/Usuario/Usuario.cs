@@ -9,6 +9,10 @@ public class Usuario
     public string? Email { get; set; }
     public string? Telefono { get; set; }
     public string Password { get; set; }
-    public UsuarioRol  Rol { get; set; }
+    public UsuarioRol Rol { get; set; }
     public StatusUsuario Status { get; set; }
+
+    // Relación opcional: Un usuario puede pertenecer a una comunidad
+    public Guid? ComunidadId { get; set; }
+    public Comunidad? Comunidad { get; set; }
 }

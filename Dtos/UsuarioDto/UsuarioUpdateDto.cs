@@ -26,4 +26,6 @@ public class UsuarioUpdateDto
     
     [Required]
     public StatusUsuario Status { get; set; }
+    
+    public Guid? ComunidadId { get; set; }
 }

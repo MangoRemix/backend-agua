@@ -17,13 +17,17 @@ public class UsuarioService : IUsuarioService
 
     public async Task<IEnumerable<UsuarioDto>> GetAllAsync()
     {
-        var usuarios = await _context.Usuarios.ToListAsync();
+        var usuarios = await _context.Usuarios
+            .Include(u => u.Comunidad)
+            .ToListAsync();
         return usuarios.Select(MapToDto);
     }
 
     public async Task<UsuarioDto?> GetByIdAsync(Guid id)
     {
-        var usuario = await _context.Usuarios.FindAsync(id);
+        var usuario = await _context.Usuarios
+            .Include(u => u.Comunidad)
+            .FirstOrDefaultAsync(u => u.Id == id);
         if (usuario == null) return null;
 
         return MapToDto(usuario);
@@ -41,7 +45,8 @@ public class UsuarioService : IUsuarioService
             Telefono = createDto.Telefono,
             Password = BCrypt.Net.BCrypt.HashPassword(createDto.Password),
             Rol = createDto.Rol,
-            Status = createDto.Status
+            Status = createDto.Status,
+            ComunidadId = createDto.ComunidadId
         };
 
         _context.Usuarios.Add(usuario);
@@ -62,6 +67,7 @@ public class UsuarioService : IUsuarioService
         usuario.Telefono = updateDto.Telefono;
         usuario.Rol = updateDto.Rol;
         usuario.Status = updateDto.Status;
+        usuario.ComunidadId = updateDto.ComunidadId;
 
         if (!string.IsNullOrEmpty(updateDto.Password))
         {
@@ -94,7 +100,9 @@ public class UsuarioService : IUsuarioService
             Email = usuario.Email,
             Telefono = usuario.Telefono,
             Rol = usuario.Rol,
-            Status = usuario.Status
+            Status = usuario.Status,
+            ComunidadId = usuario.ComunidadId,
+            ComunidadNombre = usuario.Comunidad?.Nombre
         };
     }
 }
