@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using backend_agua.Infraestructure.Database;
@@ -11,9 +12,11 @@ using backend_agua.Infraestructure.Database;
 namespace backend_agua.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260319140631_AddParroquia")]
+    partial class AddParroquia
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -21,26 +24,6 @@ namespace backend_agua.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
-
-            modelBuilder.Entity("backend_agua.Models.Comuna", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("Nombre")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<Guid>("ParroquiaId")
-                        .HasColumnType("uuid");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ParroquiaId");
-
-                    b.ToTable("Comunas");
-                });
 
             modelBuilder.Entity("backend_agua.Models.Municipio", b =>
                 {
@@ -116,17 +99,6 @@ namespace backend_agua.Migrations
                     b.ToTable("Usuarios");
                 });
 
-            modelBuilder.Entity("backend_agua.Models.Comuna", b =>
-                {
-                    b.HasOne("backend_agua.Models.Parroquia", "Parroquia")
-                        .WithMany("Comunas")
-                        .HasForeignKey("ParroquiaId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Parroquia");
-                });
-
             modelBuilder.Entity("backend_agua.Models.Parroquia", b =>
                 {
                     b.HasOne("backend_agua.Models.Municipio", "Municipio")
@@ -141,11 +113,6 @@ namespace backend_agua.Migrations
             modelBuilder.Entity("backend_agua.Models.Municipio", b =>
                 {
                     b.Navigation("Parroquias");
-                });
-
-            modelBuilder.Entity("backend_agua.Models.Parroquia", b =>
-                {
-                    b.Navigation("Comunas");
                 });
 #pragma warning restore 612, 618
         }

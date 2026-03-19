@@ -12,4 +12,6 @@ public class ApplicationDbContext : DbContext
 
     public DbSet<Usuario> Usuarios { get; set; }
     public DbSet<Municipio> Municipios { get; set; }
+    public DbSet<Parroquia> Parroquias { get; set; }
+    public DbSet<Comuna> Comunas { get; set; }
 }
