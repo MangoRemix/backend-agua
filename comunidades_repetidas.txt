@@ -1,0 +1,56 @@
+AUDITORIA TERRITORIAL: COMUNIDADES CON NOMBRES REPETIDOS
+MUNICIPIO SUCRE - FECHA: 20-03-2026
+
+A continuacion se detallan las comunidades que comparten nombre pero estan en distintas comunas. Favor verificar:
+
+1. SAN JOSE
+   - Comuna 1: Semilleros Soberano Cancamure (Altagracia)
+   - Comuna 2: La Lucha Esfuerzo Soberano (Altagracia)
+   - Comuna 3: El Árbol de las 3 Raíces (Santa Inés)
+
+2. NUEVA TOLEDO
+   - Comuna 1: 3 de Febrero Mariscal Sucre (Altagracia)
+   - Comuna 2: El Peñón Esfuerzo de Chávez (Valentin Valiente)
+
+3. VILLA BOLIVARIANA
+   - Comuna 1: Comandante Eterno por Siempre (Altagracia)
+   - Comuna 2: Comandante Eterno (AgroUrbana) (Santa Inés)
+
+4. BENDICION DE DIOS
+   - Comuna 1: Maisanta Corazón de Chávez (Altagracia)
+   - Comuna 2: Vencedores en Revolución San Luis (Ayacucho)
+
+5. LA GRAN SABANA
+   - Comuna 1: Tres Picos Hugo Rafael Chávez Frías (Altagracia)
+   - Comuna 2: El Peñón Esfuerzo de Chávez (Valentin Valiente)
+
+6. LAS VEGAS
+   - Comuna 1: Gran Mariscal de los Altos de Sucre (Gran Mariscal)
+   - Comuna 2: San Juan Bautista (San Juan)
+
+7. LOS MANGLES
+   - Comuna 1: Apacuana (Raúl Leoni)
+   - Comuna 2: Pueblo Nuevo (Valentin Valiente)
+
+8. CHISPERO
+   - Comuna 1: Guerreros de Chávez (Raúl Leoni)
+   - Comuna 2: Batalladores de Caigüire (Valentin Valiente)
+
+9. MANCOMUNIDAD
+   - Comuna 1: Riberas de Tataracual (San Juan)
+   - Comuna 2: San Juan Bautista (San Juan)
+
+10. MUNDO NUEVO
+    - Comuna 1: Revolucionarios de Guaranache (San Juan)
+    - Comuna 2: Centro Histórico (Santa Inés)
+
+11. EZEQUIEL ZAMORA
+    - Comuna 1: El Árbol de las 3 Raíces (Santa Inés)
+    - Comuna 2: El Peñón Esfuerzo de Chávez (Valentin Valiente)
+
+12. EL MANGLAR
+    - Comuna 1: Batalladores de Caigüire (Valentin Valiente)
+    - Comuna 2: El Peñón Esfuerzo de Chávez (Valentin Valiente)
+
+---
+FIN DEL REPORTE

@@ -79,6 +79,7 @@ using (var scope = app.Services.CreateScope())
     MunicipioSeeder.Initialize(scope.ServiceProvider);
     ParroquiaSeeder.Initialize(scope.ServiceProvider);
     ComunaSeeder.Initialize(scope.ServiceProvider);
+    ComunidadSeeder.Initialize(scope.ServiceProvider);
     UsuarioSeeder.Initialize(scope.ServiceProvider);
 }
 

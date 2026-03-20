@@ -11,6 +11,9 @@ public static class ParroquiaSeeder
         using var scope = serviceProvider.CreateScope();
         var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
 
+        // Si ya existen parroquias, no re-ejecutamos para garantizar integridad
+        if (context.Parroquias.Any()) return;
+
         var sucreId = Guid.Parse("7b2e8a15-4c0a-4b7d-9a8f-2e5b8c1a9d3e");
 
         var parroquias = new List<Parroquia>
