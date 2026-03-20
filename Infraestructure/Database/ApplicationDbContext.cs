@@ -16,5 +16,39 @@ public class ApplicationDbContext : DbContext
     public DbSet<Comuna> Comunas { get; set; }
     public DbSet<Comunidad> Comunidades { get; set; }
     public DbSet<Reporte> Reportes { get; set; }
+    public DbSet<ReporteSuministro> ReporteSuministros { get; set; }
+    public DbSet<ReporteIncidencia> ReporteIncidencias { get; set; }
+    public DbSet<ReporteSalud> ReporteSalud { get; set; }
+    public DbSet<ReporteParticipacion> ReporteParticipaciones { get; set; }
     public DbSet<PersonaAfectada> PersonasAfectadas { get; set; }
+
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        base.OnModelCreating(modelBuilder);
+
+        // Configurar Relaciones 1:1 para Reporte Modular
+        modelBuilder.Entity<Reporte>()
+            .HasOne(r => r.Suministro)
+            .WithOne(s => s.Reporte)
+            .HasForeignKey<ReporteSuministro>(s => s.ReporteId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder.Entity<Reporte>()
+            .HasOne(r => r.Incidencia)
+            .WithOne(i => i.Reporte)
+            .HasForeignKey<ReporteIncidencia>(i => i.ReporteId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder.Entity<Reporte>()
+            .HasOne(r => r.Salud)
+            .WithOne(s => s.Reporte)
+            .HasForeignKey<ReporteSalud>(s => s.ReporteId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder.Entity<Reporte>()
+            .HasOne(r => r.Participacion)
+            .WithOne(p => p.Reporte)
+            .HasForeignKey<ReporteParticipacion>(p => p.ReporteId)
+            .OnDelete(DeleteBehavior.Cascade);
+    }
 }

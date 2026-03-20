@@ -8,8 +8,8 @@ public class PersonaAfectada
     public Guid Id { get; set; }
 
     [Required]
-    public Guid ReporteId { get; set; }
-    public Reporte Reporte { get; set; } = null!;
+    public Guid ReporteSaludId { get; set; }
+    public ReporteSalud ReporteSalud { get; set; } = null!;
 
     [Required]
     public string Nombre { get; set; } = string.Empty;

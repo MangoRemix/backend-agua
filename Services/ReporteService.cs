@@ -17,13 +17,20 @@ public class ReporteService : IReporteService
 
     public async Task<ReporteDto> IniciarReporteAsync(Guid comunidadId, Guid usuarioId)
     {
+        var reporteId = Guid.NewGuid();
         var reporte = new Reporte
         {
-            Id = Guid.NewGuid(),
+            Id = reporteId,
             ComunidadId = comunidadId,
             UsuarioId = usuarioId,
             FechaCreacion = DateTime.UtcNow,
-            Estatus = EstatusReporte.Borrador
+            Estatus = EstatusReporte.Borrador,
+            
+            // Inicializar secciones
+            Suministro = new ReporteSuministro { Id = Guid.NewGuid(), ReporteId = reporteId },
+            Incidencia = new ReporteIncidencia { Id = Guid.NewGuid(), ReporteId = reporteId },
+            Salud = new ReporteSalud { Id = Guid.NewGuid(), ReporteId = reporteId },
+            Participacion = new ReporteParticipacion { Id = Guid.NewGuid(), ReporteId = reporteId }
         };
 
         _context.Reportes.Add(reporte);
@@ -34,22 +41,25 @@ public class ReporteService : IReporteService
 
     public async Task<ReporteDto?> UpdateSuministroAsync(Guid reporteId, ReporteSuministroUpdateDto updateDto)
     {
-        var reporte = await _context.Reportes.FindAsync(reporteId);
+        var reporte = await _context.Reportes
+            .Include(r => r.Suministro)
+            .FirstOrDefaultAsync(r => r.Id == reporteId);
+
         if (reporte == null) return null;
 
-        reporte.LlegaPorTuberia = updateDto.LlegaPorTuberia;
-        reporte.HorasSuministro = updateDto.LlegaPorTuberia ? updateDto.HorasSuministro : null;
-        reporte.Caudal = updateDto.LlegaPorTuberia ? updateDto.Caudal : null;
+        reporte.Suministro.LlegaPorTuberia = updateDto.LlegaPorTuberia;
+        reporte.Suministro.HorasSuministro = updateDto.LlegaPorTuberia ? updateDto.HorasSuministro : null;
+        reporte.Suministro.Caudal = updateDto.LlegaPorTuberia ? updateDto.Caudal : null;
 
-        reporte.RecibeCisterna = updateDto.RecibeCisterna;
-        reporte.LitrosCisterna = updateDto.RecibeCisterna ? updateDto.LitrosCisterna : null;
-        reporte.TipoCisterna = updateDto.RecibeCisterna ? updateDto.TipoCisterna : null;
+        reporte.Suministro.RecibeCisterna = updateDto.RecibeCisterna;
+        reporte.Suministro.LitrosCisterna = updateDto.RecibeCisterna ? updateDto.LitrosCisterna : null;
+        reporte.Suministro.TipoCisterna = updateDto.RecibeCisterna ? updateDto.TipoCisterna : null;
 
-        reporte.TieneTanque = updateDto.TieneTanque;
-        reporte.TipoTanque = updateDto.TieneTanque ? updateDto.TipoTanque : null;
+        reporte.Suministro.TieneTanque = updateDto.TieneTanque;
+        reporte.Suministro.TipoTanque = updateDto.TieneTanque ? updateDto.TipoTanque : null;
 
-        reporte.FamiliasBeneficiadas = updateDto.FamiliasBeneficiadas;
-        reporte.ApoyoAdicionalLitros = updateDto.ApoyoAdicionalLitros;
+        reporte.Suministro.FamiliasBeneficiadas = updateDto.FamiliasBeneficiadas;
+        reporte.Suministro.ApoyoAdicionalLitros = updateDto.ApoyoAdicionalLitros;
 
         await _context.SaveChangesAsync();
 
@@ -58,31 +68,34 @@ public class ReporteService : IReporteService
 
     public async Task<ReporteDto?> UpdateIncidenciasAsync(Guid reporteId, ReporteIncidenciasUpdateDto updateDto)
     {
-        var reporte = await _context.Reportes.FindAsync(reporteId);
+        var reporte = await _context.Reportes
+            .Include(r => r.Incidencia)
+            .FirstOrDefaultAsync(r => r.Id == reporteId);
+
         if (reporte == null) return null;
 
         // Venta Ilegal
-        reporte.TieneVentaIlegal = updateDto.TieneVentaIlegal;
-        reporte.ChoferNombreApellido = updateDto.TieneVentaIlegal ? updateDto.ChoferNombreApellido : null;
-        reporte.ChoferCedula = updateDto.TieneVentaIlegal ? updateDto.ChoferCedula : null;
-        reporte.VehiculoMarcaModelo = updateDto.TieneVentaIlegal ? updateDto.VehiculoMarcaModelo : null;
-        reporte.VehiculoPlaca = updateDto.TieneVentaIlegal ? updateDto.VehiculoPlaca : null;
-        reporte.VehiculoColor = updateDto.TieneVentaIlegal ? updateDto.VehiculoColor : null;
+        reporte.Incidencia.TieneVentaIlegal = updateDto.TieneVentaIlegal;
+        reporte.Incidencia.ChoferNombreApellido = updateDto.TieneVentaIlegal ? updateDto.ChoferNombreApellido : null;
+        reporte.Incidencia.ChoferCedula = updateDto.TieneVentaIlegal ? updateDto.ChoferCedula : null;
+        reporte.Incidencia.VehiculoMarcaModelo = updateDto.TieneVentaIlegal ? updateDto.VehiculoMarcaModelo : null;
+        reporte.Incidencia.VehiculoPlaca = updateDto.TieneVentaIlegal ? updateDto.VehiculoPlaca : null;
+        reporte.Incidencia.VehiculoColor = updateDto.TieneVentaIlegal ? updateDto.VehiculoColor : null;
 
         // Trancas
-        reporte.TieneTrancas = updateDto.TieneTrancas;
-        reporte.TrancaPropiciaNombre = updateDto.TieneTrancas ? updateDto.TrancaPropiciaNombre : null;
-        reporte.TrancaLugar = updateDto.TieneTrancas ? updateDto.TrancaLugar : null;
-        reporte.TrancaDuracion = updateDto.TieneTrancas ? updateDto.TrancaDuracion : null;
+        reporte.Incidencia.TieneTrancas = updateDto.TieneTrancas;
+        reporte.Incidencia.TrancaPropiciaNombre = updateDto.TieneTrancas ? updateDto.TrancaPropiciaNombre : null;
+        reporte.Incidencia.TrancaLugar = updateDto.TieneTrancas ? updateDto.TrancaLugar : null;
+        reporte.Incidencia.TrancaDuracion = updateDto.TieneTrancas ? updateDto.TrancaDuracion : null;
 
         // Conflictos
-        reporte.TieneConflictos = updateDto.TieneConflictos;
-        reporte.ConflictosExplicacion = updateDto.TieneConflictos ? updateDto.ConflictosExplicacion : null;
+        reporte.Incidencia.TieneConflictos = updateDto.TieneConflictos;
+        reporte.Incidencia.ConflictosExplicacion = updateDto.TieneConflictos ? updateDto.ConflictosExplicacion : null;
 
         // Fugas
-        reporte.TieneFugas = updateDto.TieneFugas;
-        reporte.FugaLugar = updateDto.TieneFugas ? updateDto.FugaLugar : null;
-        reporte.FugaTipo = updateDto.TieneFugas ? updateDto.FugaTipo : null;
+        reporte.Incidencia.TieneFugas = updateDto.TieneFugas;
+        reporte.Incidencia.FugaLugar = updateDto.TieneFugas ? updateDto.FugaLugar : null;
+        reporte.Incidencia.FugaTipo = updateDto.TieneFugas ? updateDto.FugaTipo : null;
 
         await _context.SaveChangesAsync();
         return await GetByIdAsync(reporte.Id);
@@ -91,18 +104,19 @@ public class ReporteService : IReporteService
     public async Task<ReporteDto?> UpdateSaludAsync(Guid reporteId, ReporteSaludUpdateDto updateDto)
     {
         var reporte = await _context.Reportes
-            .Include(r => r.PersonasAfectadas)
+            .Include(r => r.Salud)
+                .ThenInclude(s => s.PersonasAfectadas)
             .FirstOrDefaultAsync(r => r.Id == reporteId);
 
         if (reporte == null) return null;
 
-        reporte.TieneDiarrea = updateDto.TieneDiarrea;
-        reporte.CantidadCasosDiarrea = updateDto.TieneDiarrea ? updateDto.CantidadCasosDiarrea : 0;
-        reporte.TieneVomitos = updateDto.TieneVomitos;
-        reporte.TieneDolorAbdominal = updateDto.TieneDolorAbdominal;
+        reporte.Salud.TieneDiarrea = updateDto.TieneDiarrea;
+        reporte.Salud.CantidadCasosDiarrea = updateDto.TieneDiarrea ? updateDto.CantidadCasosDiarrea : 0;
+        reporte.Salud.TieneVomitos = updateDto.TieneVomitos;
+        reporte.Salud.TieneDolorAbdominal = updateDto.TieneDolorAbdominal;
 
         // Limpiar personas afectadas anteriores y agregar las nuevas
-        _context.PersonasAfectadas.RemoveRange(reporte.PersonasAfectadas);
+        _context.PersonasAfectadas.RemoveRange(reporte.Salud.PersonasAfectadas);
         
         foreach (var personaDto in updateDto.PersonasAfectadas)
         {
@@ -114,10 +128,10 @@ public class ReporteService : IReporteService
 
             if (esValida)
             {
-                reporte.PersonasAfectadas.Add(new PersonaAfectada
+                reporte.Salud.PersonasAfectadas.Add(new PersonaAfectada
                 {
                     Id = Guid.NewGuid(),
-                    ReporteId = reporte.Id,
+                    ReporteSaludId = reporte.Salud.Id,
                     Nombre = personaDto.Nombre,
                     Apellido = personaDto.Apellido,
                     Edad = personaDto.Edad,
@@ -133,24 +147,27 @@ public class ReporteService : IReporteService
 
     public async Task<ReporteDto?> UpdateParticipacionAsync(Guid reporteId, ReporteParticipacionUpdateDto updateDto)
     {
-        var reporte = await _context.Reportes.FindAsync(reporteId);
+        var reporte = await _context.Reportes
+            .Include(r => r.Participacion)
+            .FirstOrDefaultAsync(r => r.Id == reporteId);
+
         if (reporte == null) return null;
 
         // Partido
-        reporte.TienePartido = updateDto.TienePartido;
-        reporte.Partido = updateDto.TienePartido ? updateDto.Partido : null;
+        reporte.Participacion.TienePartido = updateDto.TienePartido;
+        reporte.Participacion.Partido = updateDto.TienePartido ? updateDto.Partido : null;
 
         // Alcaldia
-        reporte.TieneAlcaldia = updateDto.TieneAlcaldia;
-        reporte.DetalleAlcaldia = updateDto.TieneAlcaldia ? updateDto.DetalleAlcaldia : null;
+        reporte.Participacion.TieneAlcaldia = updateDto.TieneAlcaldia;
+        reporte.Participacion.DetalleAlcaldia = updateDto.TieneAlcaldia ? updateDto.DetalleAlcaldia : null;
 
         // Gobernacion
-        reporte.TieneGobernacion = updateDto.TieneGobernacion;
-        reporte.DetalleGobernacion = updateDto.TieneGobernacion ? updateDto.DetalleGobernacion : null;
+        reporte.Participacion.TieneGobernacion = updateDto.TieneGobernacion;
+        reporte.Participacion.DetalleGobernacion = updateDto.TieneGobernacion ? updateDto.DetalleGobernacion : null;
 
         // Institucion Nacional
-        reporte.TieneInstitucionNacional = updateDto.TieneInstitucionNacional;
-        reporte.DetalleInstitucionNacional = updateDto.TieneInstitucionNacional ? updateDto.DetalleInstitucionNacional : null;
+        reporte.Participacion.TieneInstitucionNacional = updateDto.TieneInstitucionNacional;
+        reporte.Participacion.DetalleInstitucionNacional = updateDto.TieneInstitucionNacional ? updateDto.DetalleInstitucionNacional : null;
 
         // El paso 4 es el último paso del stepper, por lo que marcamos el reporte como completado
         reporte.Estatus = EstatusReporte.Completado;
@@ -165,7 +182,11 @@ public class ReporteService : IReporteService
             .Include(r => r.Comunidad)
                 .ThenInclude(c => c.Comuna)
             .Include(r => r.Usuario)
-            .Include(r => r.PersonasAfectadas)
+            .Include(r => r.Suministro)
+            .Include(r => r.Incidencia)
+            .Include(r => r.Salud)
+                .ThenInclude(s => s.PersonasAfectadas)
+            .Include(r => r.Participacion)
             .FirstOrDefaultAsync(r => r.Id == id);
 
         if (reporte == null) return null;
@@ -179,6 +200,11 @@ public class ReporteService : IReporteService
             .Include(r => r.Comunidad)
                 .ThenInclude(c => c.Comuna)
             .Include(r => r.Usuario)
+            .Include(r => r.Suministro)
+            .Include(r => r.Incidencia)
+            .Include(r => r.Salud)
+                .ThenInclude(s => s.PersonasAfectadas)
+            .Include(r => r.Participacion)
             .Where(r => r.ComunidadId == comunidadId)
             .OrderByDescending(r => r.FechaCreacion)
             .ToListAsync();
@@ -207,44 +233,44 @@ public class ReporteService : IReporteService
             
             Suministro = new ReporteSuministroDto
             {
-                LlegaPorTuberia = reporte.LlegaPorTuberia,
-                HorasSuministro = reporte.HorasSuministro,
-                Caudal = reporte.Caudal?.ToString(),
-                RecibeCisterna = reporte.RecibeCisterna,
-                LitrosCisterna = reporte.LitrosCisterna,
-                TipoCisterna = reporte.TipoCisterna?.ToString(),
-                TieneTanque = reporte.TieneTanque,
-                TipoTanque = reporte.TipoTanque?.ToString(),
-                FamiliasBeneficiadas = reporte.FamiliasBeneficiadas,
-                ApoyoAdicionalLitros = reporte.ApoyoAdicionalLitros
+                LlegaPorTuberia = reporte.Suministro.LlegaPorTuberia,
+                HorasSuministro = reporte.Suministro.HorasSuministro,
+                Caudal = reporte.Suministro.Caudal?.ToString(),
+                RecibeCisterna = reporte.Suministro.RecibeCisterna,
+                LitrosCisterna = reporte.Suministro.LitrosCisterna,
+                TipoCisterna = reporte.Suministro.TipoCisterna?.ToString(),
+                TieneTanque = reporte.Suministro.TieneTanque,
+                TipoTanque = reporte.Suministro.TipoTanque?.ToString(),
+                FamiliasBeneficiadas = reporte.Suministro.FamiliasBeneficiadas,
+                ApoyoAdicionalLitros = reporte.Suministro.ApoyoAdicionalLitros
             },
 
             Incidencias = new ReporteIncidenciasDto
             {
-                TieneVentaIlegal = reporte.TieneVentaIlegal,
-                ChoferNombreApellido = reporte.ChoferNombreApellido,
-                ChoferCedula = reporte.ChoferCedula,
-                VehiculoMarcaModelo = reporte.VehiculoMarcaModelo,
-                VehiculoPlaca = reporte.VehiculoPlaca,
-                VehiculoColor = reporte.VehiculoColor,
-                TieneTrancas = reporte.TieneTrancas,
-                TrancaPropiciaNombre = reporte.TrancaPropiciaNombre,
-                TrancaLugar = reporte.TrancaLugar,
-                TrancaDuracion = reporte.TrancaDuracion,
-                TieneConflictos = reporte.TieneConflictos,
-                ConflictosExplicacion = reporte.ConflictosExplicacion,
-                TieneFugas = reporte.TieneFugas,
-                FugaLugar = reporte.FugaLugar,
-                FugaTipo = reporte.FugaTipo?.ToString()
+                TieneVentaIlegal = reporte.Incidencia.TieneVentaIlegal,
+                ChoferNombreApellido = reporte.Incidencia.ChoferNombreApellido,
+                ChoferCedula = reporte.Incidencia.ChoferCedula,
+                VehiculoMarcaModelo = reporte.Incidencia.VehiculoMarcaModelo,
+                VehiculoPlaca = reporte.Incidencia.VehiculoPlaca,
+                VehiculoColor = reporte.Incidencia.VehiculoColor,
+                TieneTrancas = reporte.Incidencia.TieneTrancas,
+                TrancaPropiciaNombre = reporte.Incidencia.TrancaPropiciaNombre,
+                TrancaLugar = reporte.Incidencia.TrancaLugar,
+                TrancaDuracion = reporte.Incidencia.TrancaDuracion,
+                TieneConflictos = reporte.Incidencia.TieneConflictos,
+                ConflictosExplicacion = reporte.Incidencia.ConflictosExplicacion,
+                TieneFugas = reporte.Incidencia.TieneFugas,
+                FugaLugar = reporte.Incidencia.FugaLugar,
+                FugaTipo = reporte.Incidencia.FugaTipo?.ToString()
             },
 
             Salud = new ReporteSaludDto
             {
-                TieneDiarrea = reporte.TieneDiarrea,
-                CantidadCasosDiarrea = reporte.CantidadCasosDiarrea,
-                TieneVomitos = reporte.TieneVomitos,
-                TieneDolorAbdominal = reporte.TieneDolorAbdominal,
-                PersonasAfectadas = reporte.PersonasAfectadas.Select(p => new PersonaAfectadaDto
+                TieneDiarrea = reporte.Salud.TieneDiarrea,
+                CantidadCasosDiarrea = reporte.Salud.CantidadCasosDiarrea,
+                TieneVomitos = reporte.Salud.TieneVomitos,
+                TieneDolorAbdominal = reporte.Salud.TieneDolorAbdominal,
+                PersonasAfectadas = reporte.Salud.PersonasAfectadas.Select(p => new PersonaAfectadaDto
                 {
                     Nombre = p.Nombre,
                     Apellido = p.Apellido,
@@ -256,14 +282,14 @@ public class ReporteService : IReporteService
 
             Participacion = new ReporteParticipacionDto
             {
-                TienePartido = reporte.TienePartido,
-                PartidoNombre = reporte.Partido?.ToString(),
-                TieneAlcaldia = reporte.TieneAlcaldia,
-                DetalleAlcaldia = reporte.DetalleAlcaldia,
-                TieneGobernacion = reporte.TieneGobernacion,
-                DetalleGobernacion = reporte.DetalleGobernacion,
-                TieneInstitucionNacional = reporte.TieneInstitucionNacional,
-                DetalleInstitucionNacional = reporte.DetalleInstitucionNacional
+                TienePartido = reporte.Participacion.TienePartido,
+                PartidoNombre = reporte.Participacion.Partido?.ToString(),
+                TieneAlcaldia = reporte.Participacion.TieneAlcaldia,
+                DetalleAlcaldia = reporte.Participacion.DetalleAlcaldia,
+                TieneGobernacion = reporte.Participacion.TieneGobernacion,
+                DetalleGobernacion = reporte.Participacion.DetalleGobernacion,
+                TieneInstitucionNacional = reporte.Participacion.TieneInstitucionNacional,
+                DetalleInstitucionNacional = reporte.Participacion.DetalleInstitucionNacional
             }
         };
     }
