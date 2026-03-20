@@ -1,0 +1,75 @@
+{
+  "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+  "comunidadId": "d4a8f1b2-3c4d-4e5f-9a8b-7c6d5e4f3a2b",
+  "usuarioId": "e5b9c2d3-4e5f-6a7b-8c9d-0e1f2a3b4c5d",
+  "usuarioNombre": "Jesus Castro",
+  "comunaNombre": "MAISANTA CORAZÓN DE CHÁVEZ",
+  "comunaLiderNombre": "Juan Pérez",
+  "comunaLiderCedula": "V-12345678",
+  "comunidadNombre": "VILLA MAISANTA",
+  "comunidadLiderNombre": "Maria Rodriguez",
+  "comunidadLiderCedula": "V-87654321",
+  "fechaCreacion": "2026-03-20T14:15:46.000Z",
+  "estatus": "Completado",
+  "suministro": {
+    "llegaPorTuberia": true,
+    "horasSuministro": 4,
+    "caudal": "Fuerte",
+    "recibeCisterna": false,
+    "litrosCisterna": 0,
+    "tipoCisterna": null,
+    "tieneTanque": true,
+    "tipoTanque": "Plastico",
+    "familiasBeneficiadas": 45,
+    "apoyoAdicionalLitros": 1000
+  },
+  "incidencias": {
+    "tieneVentaIlegal": false,
+    "choferNombreApellido": null,
+    "choferCedula": null,
+    "vehiculoMarcaModelo": null,
+    "vehiculoPlaca": null,
+    "vehiculoColor": null,
+    "tieneTrancas": true,
+    "trancaPropiciaNombre": "Comité de Transporte",
+    "trancaLugar": "Avenida Principal",
+    "trancaDuracion": "2 horas",
+    "tieneConflictos": false,
+    "conflictosExplicacion": null,
+    "tieneFugas": true,
+    "fugaLugar": "Calle 5 casa 12",
+    "fugaTipo": "Debil"
+  },
+  "salud": {
+    "tieneDiarrea": true,
+    "cantidadCasosDiarrea": 2,
+    "tieneVomitos": false,
+    "tieneDolorAbdominal": true,
+    "personasAfectadas": [
+      {
+        "nombre": "Pedro",
+        "apellido": "Gomez",
+        "edad": 12,
+        "cedula": "V-30111222",
+        "condicion": "Diarrea"
+      },
+      {
+        "nombre": "Ana",
+        "apellido": "Luna",
+        "edad": 45,
+        "cedula": "V-15666777",
+        "condicion": "DolorAbdominal"
+      }
+    ]
+  },
+  "participacion": {
+    "tienePartido": true,
+    "partidoNombre": "PSUV",
+    "tieneAlcaldia": true,
+    "detalleAlcaldia": "Apoyo con materiales de limpieza",
+    "tieneGobernacion": false,
+    "detalleGobernacion": null,
+    "tieneInstitucionNacional": true,
+    "detalleInstitucionNacional": "HidroCaribe revisión de tubería"
+  }
+}
