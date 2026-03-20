@@ -29,4 +29,6 @@ public class UsuarioCreateDto
     public StatusUsuario Status { get; set; }
     
     public Guid? ComunidadId { get; set; }
+    public Guid? ComunaId { get; set; }
+    public Guid? ParroquiaId { get; set; }
 }

@@ -14,4 +14,10 @@ public class UsuarioDto
     public StatusUsuario Status { get; set; }
     public Guid? ComunidadId { get; set; }
     public string? ComunidadNombre { get; set; }
+
+    public Guid? ComunaId { get; set; }
+    public string? ComunaNombre { get; set; }
+
+    public Guid? ParroquiaId { get; set; }
+    public string? ParroquiaNombre { get; set; }
 }

@@ -19,6 +19,8 @@ public class UsuarioService : IUsuarioService
     {
         var usuarios = await _context.Usuarios
             .Include(u => u.Comunidad)
+            .Include(u => u.Comuna)
+            .Include(u => u.Parroquia)
             .ToListAsync();
         return usuarios.Select(MapToDto);
     }
@@ -27,6 +29,8 @@ public class UsuarioService : IUsuarioService
     {
         var usuario = await _context.Usuarios
             .Include(u => u.Comunidad)
+            .Include(u => u.Comuna)
+            .Include(u => u.Parroquia)
             .FirstOrDefaultAsync(u => u.Id == id);
         if (usuario == null) return null;
 
@@ -46,7 +50,9 @@ public class UsuarioService : IUsuarioService
             Password = BCrypt.Net.BCrypt.HashPassword(createDto.Password),
             Rol = createDto.Rol,
             Status = createDto.Status,
-            ComunidadId = createDto.ComunidadId
+            ComunidadId = createDto.ComunidadId,
+            ComunaId = createDto.ComunaId,
+            ParroquiaId = createDto.ParroquiaId
         };
 
         _context.Usuarios.Add(usuario);
@@ -68,6 +74,8 @@ public class UsuarioService : IUsuarioService
         usuario.Rol = updateDto.Rol;
         usuario.Status = updateDto.Status;
         usuario.ComunidadId = updateDto.ComunidadId;
+        usuario.ComunaId = updateDto.ComunaId;
+        usuario.ParroquiaId = updateDto.ParroquiaId;
 
         if (!string.IsNullOrEmpty(updateDto.Password))
         {
@@ -102,7 +110,11 @@ public class UsuarioService : IUsuarioService
             Rol = usuario.Rol,
             Status = usuario.Status,
             ComunidadId = usuario.ComunidadId,
-            ComunidadNombre = usuario.Comunidad?.Nombre
+            ComunidadNombre = usuario.Comunidad?.Nombre,
+            ComunaId = usuario.ComunaId,
+            ComunaNombre = usuario.Comuna?.Nombre,
+            ParroquiaId = usuario.ParroquiaId,
+            ParroquiaNombre = usuario.Parroquia?.Nombre
         };
     }
 }
