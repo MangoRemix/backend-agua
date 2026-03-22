@@ -76,11 +76,17 @@ var app = builder.Build();
 // Seed the database
 using (var scope = app.Services.CreateScope())
 {
-    MunicipioSeeder.Initialize(scope.ServiceProvider);
-    ParroquiaSeeder.Initialize(scope.ServiceProvider);
-    ComunaSeeder.Initialize(scope.ServiceProvider);
-    ComunidadSeeder.Initialize(scope.ServiceProvider);
-    UsuarioSeeder.Initialize(scope.ServiceProvider);
+    var services = scope.ServiceProvider;
+    var context = services.GetRequiredService<ApplicationDbContext>();
+    
+    // Aplicar migraciones automáticamente al iniciar
+    context.Database.Migrate();
+
+    MunicipioSeeder.Initialize(services);
+    ParroquiaSeeder.Initialize(services);
+    ComunaSeeder.Initialize(services);
+    ComunidadSeeder.Initialize(services);
+    UsuarioSeeder.Initialize(services);
 }
 
 // Configure the HTTP request pipeline.
