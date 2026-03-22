@@ -6,6 +6,7 @@ public class ComunidadDto
     public string Nombre { get; set; } = string.Empty;
     public string? LiderNombre { get; set; }
     public string? LiderCedula { get; set; }
+    public string? LiderTlf { get; set; }
     public Guid ComunaId { get; set; }
     public string? ComunaNombre { get; set; }
 }

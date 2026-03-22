@@ -15,8 +15,64 @@ public class ReporteService : IReporteService
         _context = context;
     }
 
+    public async Task<ReporteStatusDto> GetReporteStatusAsync()
+    {
+        var nowUtc = DateTime.UtcNow;
+        var venezuelaTime = nowUtc.AddHours(-4);
+        
+        var openHour = 20; // 8 PM
+        var closeHour = 21; // 9 PM
+        
+        var openingToday = venezuelaTime.Date.AddHours(openHour);
+        var closingToday = venezuelaTime.Date.AddHours(closeHour);
+        
+        bool isOpen = venezuelaTime >= openingToday && venezuelaTime < closingToday;
+        
+        DateTime nextOpening;
+        DateTime? closingTime = null;
+        double remainingSeconds;
+        string message;
+        
+        if (isOpen)
+        {
+            nextOpening = openingToday.AddDays(1);
+            closingTime = closingToday;
+            remainingSeconds = (closingToday - venezuelaTime).TotalSeconds;
+            message = $"El sistema de reportes está abierto. Cierra en {(int)remainingSeconds / 60}m {(int)remainingSeconds % 60}s.";
+        }
+        else
+        {
+            if (venezuelaTime < openingToday)
+            {
+                nextOpening = openingToday;
+            }
+            else
+            {
+                nextOpening = openingToday.AddDays(1);
+            }
+            remainingSeconds = (nextOpening - venezuelaTime).TotalSeconds;
+            message = "El sistema de reportes está cerrado. Abre a las 8:00 PM.";
+        }
+        
+        return new ReporteStatusDto
+        {
+            IsOpen = isOpen,
+            ServerTime = venezuelaTime,
+            NextOpeningTime = nextOpening,
+            ClosingTime = closingTime,
+            RemainingSeconds = remainingSeconds,
+            Message = message
+        };
+    }
+
     public async Task<ReporteDto> IniciarReporteAsync(Guid comunidadId, Guid usuarioId)
     {
+        var status = await GetReporteStatusAsync();
+        if (!status.IsOpen)
+        {
+            throw new InvalidOperationException("No se pueden iniciar reportes fuera del horario permitido (8:00 PM - 9:00 PM Venezuela).");
+        }
+
         var reporteId = Guid.NewGuid();
         var reporte = new Reporte
         {
@@ -181,6 +237,7 @@ public class ReporteService : IReporteService
         var reporte = await _context.Reportes
             .Include(r => r.Comunidad)
                 .ThenInclude(c => c.Comuna)
+                    .ThenInclude(c => c.Parroquia)
             .Include(r => r.Usuario)
             .Include(r => r.Suministro)
             .Include(r => r.Incidencia)
@@ -199,6 +256,7 @@ public class ReporteService : IReporteService
         var reportes = await _context.Reportes
             .Include(r => r.Comunidad)
                 .ThenInclude(c => c.Comuna)
+                    .ThenInclude(c => c.Parroquia)
             .Include(r => r.Usuario)
             .Include(r => r.Suministro)
             .Include(r => r.Incidencia)
@@ -221,12 +279,20 @@ public class ReporteService : IReporteService
             UsuarioId = reporte.UsuarioId,
             UsuarioNombre = $"{reporte.Usuario?.Nombre} {reporte.Usuario?.Apellido}",
             
+            ParroquiaNombre = reporte.Comunidad?.Comuna?.Parroquia?.Nombre,
+            ParroquiaLiderNombre = reporte.Comunidad?.Comuna?.Parroquia?.LiderNombre,
+            ParroquiaLiderCedula = reporte.Comunidad?.Comuna?.Parroquia?.LiderCedula,
+            ParroquiaLiderTlf = reporte.Comunidad?.Comuna?.Parroquia?.LiderTlf,
+
             ComunaNombre = reporte.Comunidad?.Comuna?.Nombre,
             ComunaLiderNombre = reporte.Comunidad?.Comuna?.LiderNombre,
             ComunaLiderCedula = reporte.Comunidad?.Comuna?.LiderCedula,
+            ComunaLiderTlf = reporte.Comunidad?.Comuna?.LiderTlf,
+
             ComunidadNombre = reporte.Comunidad?.Nombre,
             ComunidadLiderNombre = reporte.Comunidad?.LiderNombre,
             ComunidadLiderCedula = reporte.Comunidad?.LiderCedula,
+            ComunidadLiderTlf = reporte.Comunidad?.LiderTlf,
 
             FechaCreacion = reporte.FechaCreacion,
             Estatus = reporte.Estatus.ToString(),

@@ -6,4 +6,7 @@ public class ParroquiaDto
     public string Nombre { get; set; } = string.Empty;
     public Guid MunicipioId { get; set; }
     public string? MunicipioNombre { get; set; }
+    public string? LiderNombre { get; set; }
+    public string? LiderCedula { get; set; }
+    public string? LiderTlf { get; set; }
 }

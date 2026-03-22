@@ -3,13 +3,23 @@
   "comunidadId": "d4a8f1b2-3c4d-4e5f-9a8b-7c6d5e4f3a2b",
   "usuarioId": "e5b9c2d3-4e5f-6a7b-8c9d-0e1f2a3b4c5d",
   "usuarioNombre": "Jesus Castro",
+  
+  "parroquiaNombre": "JOSÉ CASANOVA GODOY",
+  "parroquiaLiderNombre": "Carlos Mendoza",
+  "parroquiaLiderCedula": "V-9988776",
+  "parroquiaLiderTlf": "0412-5556677",
+
   "comunaNombre": "MAISANTA CORAZÓN DE CHÁVEZ",
   "comunaLiderNombre": "Juan Pérez",
   "comunaLiderCedula": "V-12345678",
+  "comunaLiderTlf": "0424-1112233",
+
   "comunidadNombre": "VILLA MAISANTA",
   "comunidadLiderNombre": "Maria Rodriguez",
   "comunidadLiderCedula": "V-87654321",
-  "fechaCreacion": "2026-03-20T14:15:46.000Z",
+  "comunidadLiderTlf": "0416-4445566",
+
+  "fechaCreacion": "2026-03-22T10:25:00.000Z",
   "estatus": "Completado",
   "suministro": {
     "llegaPorTuberia": true,

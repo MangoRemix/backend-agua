@@ -4,6 +4,7 @@ namespace backend_agua.Interfaces;
 
 public interface IReporteService
 {
+    Task<ReporteStatusDto> GetReporteStatusAsync();
     Task<ReporteDto> IniciarReporteAsync(Guid comunidadId, Guid usuarioId);
     Task<ReporteDto?> UpdateSuministroAsync(Guid reporteId, ReporteSuministroUpdateDto updateDto);
     Task<ReporteDto?> UpdateIncidenciasAsync(Guid reporteId, ReporteIncidenciasUpdateDto updateDto);

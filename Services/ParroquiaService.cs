@@ -26,7 +26,10 @@ public class ParroquiaService : IParroquiaService
             Id = p.Id,
             Nombre = p.Nombre,
             MunicipioId = p.MunicipioId,
-            MunicipioNombre = p.Municipio.Nombre
+            MunicipioNombre = p.Municipio.Nombre,
+            LiderNombre = p.LiderNombre,
+            LiderCedula = p.LiderCedula,
+            LiderTlf = p.LiderTlf
         });
     }
 
@@ -43,7 +46,10 @@ public class ParroquiaService : IParroquiaService
             Id = parroquia.Id,
             Nombre = parroquia.Nombre,
             MunicipioId = parroquia.MunicipioId,
-            MunicipioNombre = parroquia.Municipio.Nombre
+            MunicipioNombre = parroquia.Municipio.Nombre,
+            LiderNombre = parroquia.LiderNombre,
+            LiderCedula = parroquia.LiderCedula,
+            LiderTlf = parroquia.LiderTlf
         };
     }
 
@@ -59,7 +65,10 @@ public class ParroquiaService : IParroquiaService
             Id = p.Id,
             Nombre = p.Nombre,
             MunicipioId = p.MunicipioId,
-            MunicipioNombre = p.Municipio.Nombre
+            MunicipioNombre = p.Municipio.Nombre,
+            LiderNombre = p.LiderNombre,
+            LiderCedula = p.LiderCedula,
+            LiderTlf = p.LiderTlf
         });
     }
 
@@ -69,7 +78,10 @@ public class ParroquiaService : IParroquiaService
         {
             Id = Guid.NewGuid(),
             Nombre = createDto.Nombre,
-            MunicipioId = createDto.MunicipioId
+            MunicipioId = createDto.MunicipioId,
+            LiderNombre = createDto.LiderNombre,
+            LiderCedula = createDto.LiderCedula,
+            LiderTlf = createDto.LiderTlf
         };
 
         _context.Parroquias.Add(parroquia);
@@ -87,6 +99,9 @@ public class ParroquiaService : IParroquiaService
 
         parroquia.Nombre = updateDto.Nombre;
         parroquia.MunicipioId = updateDto.MunicipioId;
+        parroquia.LiderNombre = updateDto.LiderNombre;
+        parroquia.LiderCedula = updateDto.LiderCedula;
+        parroquia.LiderTlf = updateDto.LiderTlf;
 
         await _context.SaveChangesAsync();
 

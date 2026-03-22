@@ -10,12 +10,20 @@ public class ReporteDto
     public string? UsuarioNombre { get; set; }
     
     // Información Territorial
+    public string? ParroquiaNombre { get; set; }
+    public string? ParroquiaLiderNombre { get; set; }
+    public string? ParroquiaLiderCedula { get; set; }
+    public string? ParroquiaLiderTlf { get; set; }
+
     public string? ComunaNombre { get; set; }
     public string? ComunaLiderNombre { get; set; }
     public string? ComunaLiderCedula { get; set; }
+    public string? ComunaLiderTlf { get; set; }
+
     public string? ComunidadNombre { get; set; }
     public string? ComunidadLiderNombre { get; set; }
     public string? ComunidadLiderCedula { get; set; }
+    public string? ComunidadLiderTlf { get; set; }
 
     public DateTime FechaCreacion { get; set; }
     public string Estatus { get; set; } = string.Empty;

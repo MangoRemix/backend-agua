@@ -18,16 +18,29 @@ public class ReportesController : ControllerBase
         _reporteService = reporteService;
     }
 
+    [HttpGet("status")]
+    public async Task<ActionResult<ReporteStatusDto>> GetStatus()
+    {
+        return Ok(await _reporteService.GetReporteStatusAsync());
+    }
+
     [HttpPost("iniciar/{comunidadId}")]
     public async Task<ActionResult<ReporteDto>> Iniciar(Guid comunidadId)
     {
-        var usuarioIdStr = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-        if (string.IsNullOrEmpty(usuarioIdStr)) return Unauthorized();
+        try
+        {
+            var usuarioIdStr = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (string.IsNullOrEmpty(usuarioIdStr)) return Unauthorized();
 
-        var usuarioId = Guid.Parse(usuarioIdStr);
-        var reporte = await _reporteService.IniciarReporteAsync(comunidadId, usuarioId);
-        
-        return CreatedAtAction(nameof(GetById), new { id = reporte.Id }, reporte);
+            var usuarioId = Guid.Parse(usuarioIdStr);
+            var reporte = await _reporteService.IniciarReporteAsync(comunidadId, usuarioId);
+            
+            return CreatedAtAction(nameof(GetById), new { id = reporte.Id }, reporte);
+        }
+        catch (InvalidOperationException ex)
+        {
+            return BadRequest(new { message = ex.Message });
+        }
     }
 
     [HttpPatch("{id}/suministro")]

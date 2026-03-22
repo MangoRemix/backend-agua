@@ -27,6 +27,7 @@ public class ComunidadService : IComunidadService
             Nombre = c.Nombre,
             LiderNombre = c.LiderNombre,
             LiderCedula = c.LiderCedula,
+            LiderTlf = c.LiderTlf,
             ComunaId = c.ComunaId,
             ComunaNombre = c.Comuna.Nombre
         });
@@ -46,6 +47,7 @@ public class ComunidadService : IComunidadService
             Nombre = comunidad.Nombre,
             LiderNombre = comunidad.LiderNombre,
             LiderCedula = comunidad.LiderCedula,
+            LiderTlf = comunidad.LiderTlf,
             ComunaId = comunidad.ComunaId,
             ComunaNombre = comunidad.Comuna.Nombre
         };
@@ -62,6 +64,9 @@ public class ComunidadService : IComunidadService
         {
             Id = c.Id,
             Nombre = c.Nombre,
+            LiderNombre = c.LiderNombre,
+            LiderCedula = c.LiderCedula,
+            LiderTlf = c.LiderTlf,
             ComunaId = c.ComunaId,
             ComunaNombre = c.Comuna.Nombre
         });
@@ -75,6 +80,7 @@ public class ComunidadService : IComunidadService
             Nombre = createDto.Nombre,
             LiderNombre = createDto.LiderNombre,
             LiderCedula = createDto.LiderCedula,
+            LiderTlf = createDto.LiderTlf,
             ComunaId = createDto.ComunaId
         };
 
@@ -92,6 +98,7 @@ public class ComunidadService : IComunidadService
         comunidad.Nombre = updateDto.Nombre;
         comunidad.LiderNombre = updateDto.LiderNombre;
         comunidad.LiderCedula = updateDto.LiderCedula;
+        comunidad.LiderTlf = updateDto.LiderTlf;
         comunidad.ComunaId = updateDto.ComunaId;
 
         await _context.SaveChangesAsync();

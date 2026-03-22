@@ -9,6 +9,7 @@ public class ComunidadCreateDto
 
     public string? LiderNombre { get; set; }
     public string? LiderCedula { get; set; }
+    public string? LiderTlf { get; set; }
 
     [Required]
     public Guid ComunaId { get; set; }

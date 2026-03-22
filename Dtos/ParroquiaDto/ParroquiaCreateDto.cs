@@ -9,4 +9,8 @@ public class ParroquiaCreateDto
 
     [Required]
     public Guid MunicipioId { get; set; }
+
+    public string? LiderNombre { get; set; }
+    public string? LiderCedula { get; set; }
+    public string? LiderTlf { get; set; }
 }
