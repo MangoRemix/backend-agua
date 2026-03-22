@@ -1,4 +1,5 @@
 using backend_agua.Dtos.Usuario;
+using backend_agua.Dtos.Common;
 using backend_agua.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -22,6 +23,13 @@ public class UsuariosController : ControllerBase
     {
         var usuarios = await _usuarioService.GetAllAsync();
         return Ok(usuarios);
+    }
+
+    [HttpGet("paged")]
+    public async Task<ActionResult<PagedResult<UsuarioDto>>> GetPaged([FromQuery] UsuarioFilterDto filter)
+    {
+        var result = await _usuarioService.GetPagedAsync(filter);
+        return Ok(result);
     }
 
     [HttpGet("{id}")]

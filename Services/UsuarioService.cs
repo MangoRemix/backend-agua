@@ -1,4 +1,5 @@
 using backend_agua.Dtos.Usuario;
+using backend_agua.Dtos.Common;
 using backend_agua.Infraestructure.Database;
 using backend_agua.Interfaces;
 using backend_agua.Models;
@@ -23,6 +24,43 @@ public class UsuarioService : IUsuarioService
             .Include(u => u.Parroquia)
             .ToListAsync();
         return usuarios.Select(MapToDto);
+    }
+
+    public async Task<PagedResult<UsuarioDto>> GetPagedAsync(UsuarioFilterDto filter)
+    {
+        var query = _context.Usuarios
+            .Include(u => u.Comunidad)
+            .Include(u => u.Comuna)
+            .Include(u => u.Parroquia)
+            .AsQueryable();
+
+        // Filtros
+        if (filter.ParroquiaId.HasValue)
+            query = query.Where(u => u.ParroquiaId == filter.ParroquiaId);
+        
+        if (filter.ComunaId.HasValue)
+            query = query.Where(u => u.ComunaId == filter.ComunaId);
+
+        if (filter.Status.HasValue)
+            query = query.Where(u => u.Status == filter.Status);
+
+        if (filter.Rol.HasValue)
+            query = query.Where(u => u.Rol == filter.Rol);
+
+        var totalItems = await query.CountAsync();
+        
+        var items = await query
+            .Skip((filter.PageNumber - 1) * filter.PageSize)
+            .Take(filter.PageSize)
+            .ToListAsync();
+
+        return new PagedResult<UsuarioDto>
+        {
+            Items = items.Select(MapToDto),
+            TotalItems = totalItems,
+            PageNumber = filter.PageNumber,
+            PageSize = filter.PageSize
+        };
     }
 
     public async Task<UsuarioDto?> GetByIdAsync(Guid id)
