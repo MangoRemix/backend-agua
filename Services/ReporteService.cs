@@ -185,7 +185,6 @@ public class ReporteService : IReporteService
     {
         var reporte = await _context.Reportes
             .Include(r => r.Salud)
-                .ThenInclude(s => s.PersonasAfectadas)
             .FirstOrDefaultAsync(r => r.Id == reporteId);
 
         if (reporte == null) return null;
@@ -207,11 +206,11 @@ public class ReporteService : IReporteService
         reporte.Salud.TieneVomitos = updateDto.TieneVomitos;
         reporte.Salud.TieneDolorAbdominal = updateDto.TieneDolorAbdominal;
 
-        // Limpiar personas afectadas anteriores (marcarlas para borrado en el contexto y resetear la lista local)
-        if (reporte.Salud.PersonasAfectadas != null && reporte.Salud.PersonasAfectadas.Any())
-        {
-            _context.PersonasAfectadas.RemoveRange(reporte.Salud.PersonasAfectadas);
-        }
+        // Limpiar personas afectadas anteriores (Directamente en DB para evitar líos de seguimiento de EF)
+        await _context.Database.ExecuteSqlRawAsync(
+            "DELETE FROM \"PersonasAfectadas\" WHERE \"ReporteSaludId\" = {0}", 
+            reporte.Salud.Id);
+            
         reporte.Salud.PersonasAfectadas = new List<PersonaAfectada>();
         
         if (updateDto.PersonasAfectadas != null)
