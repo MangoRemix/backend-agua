@@ -92,44 +92,11 @@ builder.Services.AddSwaggerGen(c =>
 
 var app = builder.Build();
 
-// MANEJADOR ULTRA-ROBUSTO DE CORS Y OPTIONS
-app.Use(async (context, next) =>
-{
-    var origin = context.Request.Headers.Origin.FirstOrDefault() ?? "*";
-    var requestHeaders = context.Request.Headers["Access-Control-Request-Headers"].FirstOrDefault() ?? "Authorization, Content-Type, Accept";
-    
-    // Siempre añadir cabeceras básicas para cada respuesta
-    context.Response.Headers.Append("Access-Control-Allow-Origin", origin);
-    context.Response.Headers.Append("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, PATCH, OPTIONS");
-    context.Response.Headers.Append("Access-Control-Allow-Headers", requestHeaders);
-    context.Response.Headers.Append("Access-Control-Allow-Credentials", "true");
-    context.Response.Headers.Append("Access-Control-Max-Age", "1728000"); // 20 días de cache para preflight
-
-    if (context.Request.Method == "OPTIONS")
-    {
-        Console.WriteLine($"[CORS] Preflight OPTIONS interceptado desde {origin}. Headers solicitados: {requestHeaders}");
-        context.Response.StatusCode = 204;
-        await context.Response.CompleteAsync();
-        return;
-    }
-
-    try
-    {
-        await next();
-    }
-    catch (Exception ex)
-    {
-        Console.WriteLine($"[CORS ERROR CATCH] {ex.Message}");
-        // Asegurar que incluso en error las cabeceras persistan
-        if (!context.Response.HasStarted)
-        {
-            context.Response.StatusCode = 500;
-            await context.Response.WriteAsJsonAsync(new { error = "Internal Server Error during mapped request", detail = ex.Message });
-        }
-    }
-});
-
-// app.UseCors(...) // Comentado para usar solo el inyector ultra-robusto
+app.UseCors(policy => 
+    policy.SetIsOriginAllowed(_ => true)
+          .AllowAnyMethod()
+          .AllowAnyHeader()
+          .AllowCredentials());
 
 // Seed the database
 using (var scope = app.Services.CreateScope())

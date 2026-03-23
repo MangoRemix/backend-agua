@@ -43,7 +43,7 @@ public class ReportesController : ControllerBase
         }
     }
 
-    [HttpPatch("{id}/suministro")]
+    [HttpPost("{id}/suministro")]
     public async Task<ActionResult<ReporteDto>> UpdateSuministro(Guid id, [FromBody] ReporteSuministroUpdateDto updateDto)
     {
         var reporte = await _reporteService.UpdateSuministroAsync(id, updateDto);
@@ -52,7 +52,7 @@ public class ReportesController : ControllerBase
         return Ok(reporte);
     }
 
-    [HttpPatch("{id}/incidencias")]
+    [HttpPost("{id}/incidencias")]
     public async Task<ActionResult<ReporteDto>> UpdateIncidencias(Guid id, [FromBody] ReporteIncidenciasUpdateDto updateDto)
     {
         var reporte = await _reporteService.UpdateIncidenciasAsync(id, updateDto);
@@ -61,7 +61,7 @@ public class ReportesController : ControllerBase
         return Ok(reporte);
     }
 
-    [HttpPatch("{id}/salud")]
+    [HttpPost("{id}/salud")]
     public async Task<ActionResult<ReporteDto>> UpdateSalud(Guid id, [FromBody] ReporteSaludUpdateDto updateDto)
     {
         var reporte = await _reporteService.UpdateSaludAsync(id, updateDto);
@@ -70,7 +70,7 @@ public class ReportesController : ControllerBase
         return Ok(reporte);
     }
 
-    [HttpPatch("{id}/participacion")]
+    [HttpPost("{id}/participacion")]
     public async Task<ActionResult<ReporteDto>> UpdateParticipacion(Guid id, [FromBody] ReporteParticipacionUpdateDto updateDto)
     {
         var reporte = await _reporteService.UpdateParticipacionAsync(id, updateDto);
@@ -79,7 +79,7 @@ public class ReportesController : ControllerBase
         return Ok(reporte);
     }
 
-    [HttpPatch("{id}/read")]
+    [HttpPost("{id}/read")]
     public async Task<ActionResult<ReporteDto>> UpdateIsLeido(Guid id, [FromBody] bool isLeido)
     {
         var reporte = await _reporteService.UpdateIsLeidoAsync(id, isLeido);
