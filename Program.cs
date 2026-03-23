@@ -92,6 +92,8 @@ builder.Services.AddSwaggerGen(c =>
 
 var app = builder.Build();
 
+app.UseCors("AllowAll"); // Mover al principio para asegurar preflights y redirecciones
+
 // Seed the database
 using (var scope = app.Services.CreateScope())
 {
@@ -108,13 +110,11 @@ using (var scope = app.Services.CreateScope())
     UsuarioSeeder.Initialize(services);
 }
 
+app.UseHttpsRedirection();
+
 // Configure the HTTP request pipeline.
 app.UseSwagger();
 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Backend Agua API v1"));
-
-app.UseCors("AllowAll");
-
-app.UseHttpsRedirection();
 
 app.UseAuthentication();
 app.UseAuthorization();
