@@ -92,6 +92,33 @@ builder.Services.AddSwaggerGen(c =>
 
 var app = builder.Build();
 
+// Middleware de Emergencia: Captura errores y asegura cabeceras CORS
+app.Use(async (context, next) =>
+{
+    try
+    {
+        // Forzar cabeceras en cada respuesta (incluyendo errores)
+        context.Response.Headers.Append("Access-Control-Allow-Origin", context.Request.Headers.Origin.FirstOrDefault() ?? "*");
+        context.Response.Headers.Append("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, PATCH, OPTIONS");
+        context.Response.Headers.Append("Access-Control-Allow-Headers", "Authorization, Content-Type, Accept, X-Requested-With, X-SignalR-User-Agent");
+        context.Response.Headers.Append("Access-Control-Allow-Credentials", "true");
+
+        if (context.Request.Method == "OPTIONS")
+        {
+            context.Response.StatusCode = 204;
+            return;
+        }
+
+        await next();
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine($"[CRITICAL ERROR] {ex.Message}");
+        context.Response.StatusCode = 500;
+        await context.Response.WriteAsJsonAsync(new { error = ex.Message, detail = ex.StackTrace });
+    }
+});
+
 app.UseCors(policy => 
     policy.SetIsOriginAllowed(_ => true)
           .AllowAnyMethod()
