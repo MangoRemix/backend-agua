@@ -19,10 +19,10 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAll", policy =>
     {
-        policy.SetIsOriginAllowed(_ => true)
-              .WithMethods("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS")
-              .WithHeaders("Authorization", "Content-Type", "Accept", "X-Requested-With", "X-SignalR-User-Agent")
-              .AllowCredentials();
+        policy.SetIsOriginAllowed(_ => true) // Reemplaza AllowAnyOrigin() para permitir credenciales
+              .AllowAnyMethod()
+              .AllowAnyHeader()
+              .AllowCredentials(); // Requerido para SignalR
     });
 });
 
@@ -91,25 +91,6 @@ builder.Services.AddSwaggerGen(c =>
 });
 
 var app = builder.Build();
-
-// Middleware de diagnóstico de CORS y manejo de OPTIONS manual
-app.Use(async (context, next) =>
-{
-    // Asegurar que las cabeceras CORS estén presentes en todas las respuestas
-    context.Response.Headers.Append("Access-Control-Allow-Origin", context.Request.Headers.Origin.FirstOrDefault() ?? "*");
-    context.Response.Headers.Append("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, PATCH, OPTIONS");
-    context.Response.Headers.Append("Access-Control-Allow-Headers", "Authorization, Content-Type, Accept, X-Requested-With, X-SignalR-User-Agent");
-    context.Response.Headers.Append("Access-Control-Allow-Credentials", "true");
-
-    if (context.Request.Method == "OPTIONS")
-    {
-        context.Response.StatusCode = 204;
-        await context.Response.CompleteAsync();
-        return;
-    }
-
-    await next();
-});
 
 app.UseCors("AllowAll");
 
