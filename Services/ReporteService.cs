@@ -421,7 +421,7 @@ public class ReporteService : IReporteService
             IsLeido = reporte.IsLeido,
             SubmissionRemainingSeconds = remainingSeconds,
             
-            Suministro = new ReporteSuministroDto
+            Suministro = reporte.Suministro == null ? new ReporteSuministroDto() : new ReporteSuministroDto
             {
                 LlegaPorTuberia = reporte.Suministro.LlegaPorTuberia,
                 HorasSuministro = reporte.Suministro.HorasSuministro,
@@ -435,7 +435,7 @@ public class ReporteService : IReporteService
                 ApoyoAdicionalLitros = reporte.Suministro.ApoyoAdicionalLitros
             },
 
-            Incidencias = new ReporteIncidenciasDto
+            Incidencias = reporte.Incidencia == null ? new ReporteIncidenciasDto() : new ReporteIncidenciasDto
             {
                 TieneVentaIlegal = reporte.Incidencia.TieneVentaIlegal,
                 ChoferNombreApellido = reporte.Incidencia.ChoferNombreApellido,
@@ -454,23 +454,23 @@ public class ReporteService : IReporteService
                 FugaTipo = reporte.Incidencia.FugaTipo?.ToString()
             },
 
-            Salud = new ReporteSaludDto
+            Salud = reporte.Salud == null ? new ReporteSaludDto() : new ReporteSaludDto
             {
                 TieneDiarrea = reporte.Salud.TieneDiarrea,
                 CantidadCasosDiarrea = reporte.Salud.CantidadCasosDiarrea,
                 TieneVomitos = reporte.Salud.TieneVomitos,
                 TieneDolorAbdominal = reporte.Salud.TieneDolorAbdominal,
-                PersonasAfectadas = reporte.Salud.PersonasAfectadas.Select(p => new PersonaAfectadaDto
+                PersonasAfectadas = reporte.Salud.PersonasAfectadas?.Select(p => new PersonaAfectadaDto
                 {
                     Nombre = p.Nombre,
                     Apellido = p.Apellido,
                     Edad = p.Edad,
                     Cedula = p.Cedula,
                     Condicion = p.Condicion
-                }).ToList()
+                }).ToList() ?? new List<PersonaAfectadaDto>()
             },
 
-            Participacion = new ReporteParticipacionDto
+            Participacion = reporte.Participacion == null ? new ReporteParticipacionDto() : new ReporteParticipacionDto
             {
                 TienePartido = reporte.Participacion.TienePartido,
                 PartidoNombre = reporte.Participacion.Partido?.ToString(),
