@@ -23,7 +23,7 @@ public class ReporteIncidencia
     public bool TieneTrancas { get; set; }
     public string? TrancaPropiciaNombre { get; set; }
     public string? TrancaLugar { get; set; }
-    public string? TrancaDuracion { get; set; }
+    public TimeSpan? TrancaDuracion { get; set; }
 
     // Conflictos
     public bool TieneConflictos { get; set; }

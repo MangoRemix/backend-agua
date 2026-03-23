@@ -62,7 +62,7 @@ public class ReporteIncidenciasDto
     public bool TieneTrancas { get; set; }
     public string? TrancaPropiciaNombre { get; set; }
     public string? TrancaLugar { get; set; }
-    public string? TrancaDuracion { get; set; }
+    public TimeSpan? TrancaDuracion { get; set; }
 
     public bool TieneConflictos { get; set; }
     public string? ConflictosExplicacion { get; set; }
