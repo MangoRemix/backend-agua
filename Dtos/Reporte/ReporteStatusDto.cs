@@ -7,5 +7,6 @@ public class ReporteStatusDto
     public DateTime NextOpeningTime { get; set; }
     public DateTime? ClosingTime { get; set; }
     public double RemainingSeconds { get; set; }
+    public double SubmissionRemainingSeconds { get; set; }
     public string Message { get; set; } = string.Empty;
 }

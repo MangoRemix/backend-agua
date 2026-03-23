@@ -84,6 +84,7 @@ public class ReporteService : IReporteService
             NextOpeningTime = nextOpening,
             ClosingTime = closingTime,
             RemainingSeconds = remainingSeconds,
+            SubmissionRemainingSeconds = remainingSeconds,
             Message = message
         };
     }
