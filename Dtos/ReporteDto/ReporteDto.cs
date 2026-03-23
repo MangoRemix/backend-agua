@@ -28,6 +28,7 @@ public class ReporteDto
     public DateTime FechaCreacion { get; set; }
     public string Estatus { get; set; } = string.Empty;
     public bool IsLeido { get; set; }
+    public double SubmissionRemainingSeconds { get; set; }
 
     public ReporteSuministroDto Suministro { get; set; } = new();
     public ReporteIncidenciasDto Incidencias { get; set; } = new();

@@ -9,6 +9,9 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Text;
 
+using backend_agua.BackgroundServices;
+using backend_agua.Hubs;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -52,6 +55,8 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     });
 
 builder.Services.AddControllers();
+builder.Services.AddSignalR();
+builder.Services.AddHostedService<ReportTimerWorker>();
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
@@ -114,5 +119,6 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+app.MapHub<ReportHub>("/hubs/reports");
 
 app.Run();

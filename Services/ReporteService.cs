@@ -304,8 +304,16 @@ public class ReporteService : IReporteService
         return reportes.Select(MapToDto);
     }
 
-    private static ReporteDto MapToDto(Reporte reporte)
+    private ReporteDto MapToDto(Reporte reporte)
     {
+        var nowUtc = DateTime.UtcNow;
+        var venezuelaTime = TimeZoneInfo.ConvertTimeFromUtc(nowUtc, GetCaracasTimeZone());
+        var openingToday = reporte.FechaCreacion.Date.AddHours(_settings.OpenHour).AddMinutes(_settings.OpenMinute);
+        var closingTime = openingToday.AddMinutes(_settings.DurationMinutes);
+        
+        double remainingSeconds = (closingTime - venezuelaTime).TotalSeconds;
+        if (remainingSeconds < 0) remainingSeconds = 0;
+
         return new ReporteDto
         {
             Id = reporte.Id,
@@ -331,6 +339,7 @@ public class ReporteService : IReporteService
             FechaCreacion = reporte.FechaCreacion,
             Estatus = reporte.Estatus.ToString(),
             IsLeido = reporte.IsLeido,
+            SubmissionRemainingSeconds = remainingSeconds,
             
             Suministro = new ReporteSuministroDto
             {
