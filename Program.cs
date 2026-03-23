@@ -2,6 +2,7 @@ using backend_agua.Infraestructure.Database;
 using backend_agua.Infraestructure.Seeders;
 using backend_agua.Interfaces;
 using backend_agua.Services;
+using backend_agua.Settings;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -31,6 +32,8 @@ builder.Services.AddScoped<IParroquiaService, ParroquiaService>();
 builder.Services.AddScoped<IComunaService, ComunaService>();
 builder.Services.AddScoped<IComunidadService, ComunidadService>();
 builder.Services.AddScoped<IReporteService, ReporteService>();
+
+builder.Services.Configure<ReportSettings>(builder.Configuration.GetSection("ReportSettings"));
 
 var jwtSettings = builder.Configuration.GetSection("Jwt");
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)

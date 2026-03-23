@@ -2,17 +2,21 @@ using backend_agua.Dtos.Reporte;
 using backend_agua.Infraestructure.Database;
 using backend_agua.Interfaces;
 using backend_agua.Models;
+using backend_agua.Settings;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 
 namespace backend_agua.Services;
 
 public class ReporteService : IReporteService
 {
     private readonly ApplicationDbContext _context;
+    private readonly ReportSettings _settings;
 
-    public ReporteService(ApplicationDbContext context)
+    public ReporteService(ApplicationDbContext context, IOptions<ReportSettings> settings)
     {
         _context = context;
+        _settings = settings.Value;
     }
 
     public async Task<ReporteStatusDto> GetReporteStatusAsync()
@@ -20,13 +24,14 @@ public class ReporteService : IReporteService
         var nowUtc = DateTime.UtcNow;
         var venezuelaTime = TimeZoneInfo.ConvertTimeFromUtc(nowUtc, GetCaracasTimeZone());
         
-        var openHour = 20; // 8 PM
-        var closeHour = 21; // 9 PM
+        bool isManualDisabled = _settings.IsManualDisabled;
+        bool isManualEnabled = _settings.IsManualEnabled;
         
-        var openingToday = venezuelaTime.Date.AddHours(openHour);
-        var closingToday = venezuelaTime.Date.AddHours(closeHour);
+        var openingToday = venezuelaTime.Date.AddHours(_settings.OpenHour).AddMinutes(_settings.OpenMinute);
+        var closingToday = openingToday.AddMinutes(_settings.DurationMinutes);
         
-        bool isOpen = venezuelaTime >= openingToday && venezuelaTime < closingToday;
+        // El manual disabled tiene prioridad sobre el manual enabled por seguridad
+        bool isOpen = !isManualDisabled && (isManualEnabled || (venezuelaTime >= openingToday && venezuelaTime < closingToday));
         
         DateTime nextOpening;
         DateTime? closingTime = null;
@@ -36,22 +41,40 @@ public class ReporteService : IReporteService
         if (isOpen)
         {
             nextOpening = openingToday.AddDays(1);
-            closingTime = closingToday;
-            remainingSeconds = (closingToday - venezuelaTime).TotalSeconds;
-            message = $"El sistema de reportes está abierto. Cierra en {(int)remainingSeconds / 60}m {(int)remainingSeconds % 60}s.";
+            
+            if (isManualEnabled && !isManualDisabled)
+            {
+                closingTime = null;
+                remainingSeconds = 0;
+                message = "El sistema está abierto manualmente por configuración administrativa.";
+            }
+            else
+            {
+                closingTime = closingToday;
+                remainingSeconds = (closingToday - venezuelaTime).TotalSeconds;
+                message = $"El sistema de reportes está abierto. Cierra en {(int)remainingSeconds / 60}m {(int)remainingSeconds % 60}s.";
+            }
         }
         else
         {
-            if (venezuelaTime < openingToday)
+            if (isManualDisabled)
+            {
+                nextOpening = openingToday.AddDays(1);
+                remainingSeconds = 0;
+                message = "El sistema de reportes está deshabilitado manualmente.";
+            }
+            else if (venezuelaTime < openingToday)
             {
                 nextOpening = openingToday;
+                remainingSeconds = (nextOpening - venezuelaTime).TotalSeconds;
+                message = $"El sistema de reportes está cerrado. Abre a las {_settings.OpenHour}:{_settings.OpenMinute:D2}.";
             }
             else
             {
                 nextOpening = openingToday.AddDays(1);
+                remainingSeconds = (nextOpening - venezuelaTime).TotalSeconds;
+                message = $"El sistema de reportes está cerrado. Abre mañana a las {_settings.OpenHour}:{_settings.OpenMinute:D2}.";
             }
-            remainingSeconds = (nextOpening - venezuelaTime).TotalSeconds;
-            message = "El sistema de reportes está cerrado. Abre a las 8:00 PM.";
         }
         
         return new ReporteStatusDto
