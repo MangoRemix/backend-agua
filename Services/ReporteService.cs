@@ -18,7 +18,7 @@ public class ReporteService : IReporteService
     public async Task<ReporteStatusDto> GetReporteStatusAsync()
     {
         var nowUtc = DateTime.UtcNow;
-        var venezuelaTime = nowUtc.AddHours(-4);
+        var venezuelaTime = TimeZoneInfo.ConvertTimeFromUtc(nowUtc, GetCaracasTimeZone());
         
         var openHour = 20; // 8 PM
         var closeHour = 21; // 9 PM
@@ -370,5 +370,19 @@ public class ReporteService : IReporteService
                 DetalleInstitucionNacional = reporte.Participacion.DetalleInstitucionNacional
             }
         };
+    }
+
+    private static TimeZoneInfo GetCaracasTimeZone()
+    {
+        try
+        {
+            // Windows ID
+            return TimeZoneInfo.FindSystemTimeZoneById("Venezuela Standard Time");
+        }
+        catch (TimeZoneNotFoundException)
+        {
+            // Linux/macOS/ICU ID
+            return TimeZoneInfo.FindSystemTimeZoneById("America/Caracas");
+        }
     }
 }
