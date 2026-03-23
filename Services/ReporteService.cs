@@ -206,11 +206,17 @@ public class ReporteService : IReporteService
         reporte.Salud.TieneVomitos = updateDto.TieneVomitos;
         reporte.Salud.TieneDolorAbdominal = updateDto.TieneDolorAbdominal;
 
-        // Limpiar personas afectadas anteriores (Directamente en DB para evitar líos de seguimiento de EF)
+        // 1. Borrado físico en DB
         await _context.Database.ExecuteSqlRawAsync(
             "DELETE FROM \"PersonasAfectadas\" WHERE \"ReporteSaludId\" = {0}", 
             reporte.Salud.Id);
             
+        // 2. Limpiar el rastreador de EF para evitar que intente "actualizar" registros antiguos (CAUSA DEL ERROR DE CONCURRENCIA)
+        var trackedEntries = _context.ChangeTracker.Entries<PersonaAfectada>()
+            .Where(e => e.Entity.ReporteSaludId == reporte.Salud.Id)
+            .ToList();
+        foreach (var entry in trackedEntries) entry.State = EntityState.Detached;
+
         reporte.Salud.PersonasAfectadas = new List<PersonaAfectada>();
         
         if (updateDto.PersonasAfectadas != null)
@@ -225,9 +231,9 @@ public class ReporteService : IReporteService
 
                 if (esValida)
                 {
+                    // IMPORTANTE: Dejar que el Id lo asigne EF/DB para asegurar el estado 'Added'
                     reporte.Salud.PersonasAfectadas.Add(new PersonaAfectada
                     {
-                        Id = Guid.NewGuid(),
                         ReporteSaludId = reporte.Salud.Id,
                         Nombre = personaDto.Nombre,
                         Apellido = personaDto.Apellido,
