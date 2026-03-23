@@ -44,6 +44,9 @@ public class UsuarioService : IUsuarioService
         if (filter.ComunidadId.HasValue)
             query = query.Where(u => u.ComunidadId == filter.ComunidadId);
 
+        if (!string.IsNullOrEmpty(filter.Cedula))
+            query = query.Where(u => u.Cedula.Contains(filter.Cedula));
+
         if (filter.Status.HasValue)
             query = query.Where(u => u.Status == filter.Status);
 

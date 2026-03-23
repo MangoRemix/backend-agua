@@ -8,6 +8,7 @@ public class UsuarioFilterDto : PaginationParams
     public Guid? ParroquiaId { get; set; }
     public Guid? ComunaId { get; set; }
     public Guid? ComunidadId { get; set; }
+    public string? Cedula { get; set; }
     public StatusUsuario? Status { get; set; }
     public UsuarioRol? Rol { get; set; }
 }
