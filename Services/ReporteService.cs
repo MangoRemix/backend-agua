@@ -80,7 +80,7 @@ public class ReporteService : IReporteService
             ComunidadId = comunidadId,
             UsuarioId = usuarioId,
             FechaCreacion = DateTime.UtcNow,
-            Estatus = EstatusReporte.Borrador,
+            Estatus = EstatusReporte.Incompleto,
             
             // Inicializar secciones
             Suministro = new ReporteSuministro { Id = Guid.NewGuid(), ReporteId = reporteId },

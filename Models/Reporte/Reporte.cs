@@ -19,7 +19,7 @@ public class Reporte
     public DateTime FechaCreacion { get; set; } = DateTime.UtcNow;
     
     [Required]
-    public EstatusReporte Estatus { get; set; } = EstatusReporte.Borrador;
+    public EstatusReporte Estatus { get; set; } = EstatusReporte.Incompleto;
 
     // --- PROPIEDADES DE NAVEGACIÓN MODULARES ---
     public virtual ReporteSuministro Suministro { get; set; } = null!;

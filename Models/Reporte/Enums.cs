@@ -20,7 +20,7 @@ public enum TipoTanque
 
 public enum EstatusReporte
 {
-    Borrador,
+    Incompleto,
     Completado
 }
 
