@@ -24,7 +24,11 @@ public class AuthService : IAuthService
 
     public async Task<AuthResponseDto?> LoginAsync(LoginDto loginDto)
     {
-        var usuario = await _context.Usuarios.FirstOrDefaultAsync(u => u.Cedula == loginDto.Cedula);
+        var usuario = await _context.Usuarios
+            .Include(u => u.Comunidad)
+            .Include(u => u.Comuna)
+            .Include(u => u.Parroquia)
+            .FirstOrDefaultAsync(u => u.Cedula == loginDto.Cedula);
 
         if (usuario == null)
             return null; // Usuario no encontrado
@@ -44,7 +48,16 @@ public class AuthService : IAuthService
             Email = usuario.Email,
             Telefono = usuario.Telefono,
             Rol = usuario.Rol,
-            Status = usuario.Status
+            Status = usuario.Status,
+            
+            ComunidadId = usuario.ComunidadId,
+            ComunidadNombre = usuario.Comunidad?.Nombre,
+            
+            ComunaId = usuario.ComunaId,
+            ComunaNombre = usuario.Comuna?.Nombre,
+            
+            ParroquiaId = usuario.ParroquiaId,
+            ParroquiaNombre = usuario.Parroquia?.Nombre
         };
 
         var token = GenerateJwtToken(usuarioDto);
