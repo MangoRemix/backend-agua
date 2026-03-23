@@ -61,11 +61,9 @@ public class ReportesController : ControllerBase
         return Ok(reporte);
     }
 
-    [AllowAnonymous]
     [HttpPatch("{id}/salud")]
     public async Task<ActionResult<ReporteDto>> UpdateSalud(Guid id, [FromBody] ReporteSaludUpdateDto updateDto)
     {
-        Console.WriteLine($"[DEBUG] Recibida petición PATCH salud para ID: {id}");
         var reporte = await _reporteService.UpdateSaludAsync(id, updateDto);
         if (reporte == null) return NotFound();
         
