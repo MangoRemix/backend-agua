@@ -13,7 +13,7 @@ public class ReporteSuministro
     public Reporte Reporte { get; set; } = null!;
 
     public bool LlegaPorTuberia { get; set; }
-    public int? HorasSuministro { get; set; }
+    public TimeSpan? HorasSuministro { get; set; }
     public CaudalAgua? Caudal { get; set; }
 
     public bool RecibeCisterna { get; set; }

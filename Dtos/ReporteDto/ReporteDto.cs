@@ -39,7 +39,7 @@ public class ReporteDto
 public class ReporteSuministroDto
 {
     public bool LlegaPorTuberia { get; set; }
-    public int? HorasSuministro { get; set; }
+    public TimeSpan? HorasSuministro { get; set; }
     public string? Caudal { get; set; }
     public bool RecibeCisterna { get; set; }
     public int? LitrosCisterna { get; set; }
