@@ -92,6 +92,24 @@ builder.Services.AddSwaggerGen(c =>
 
 var app = builder.Build();
 
+// Inyector manual de cabeceras CORS al inicio de todo
+app.Use(async (context, next) =>
+{
+    context.Response.Headers.Append("Access-Control-Allow-Origin", context.Request.Headers.Origin.FirstOrDefault() ?? "*");
+    context.Response.Headers.Append("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, PATCH, OPTIONS");
+    context.Response.Headers.Append("Access-Control-Allow-Headers", "Authorization, Content-Type, Accept, X-Requested-With, X-SignalR-User-Agent");
+    context.Response.Headers.Append("Access-Control-Allow-Credentials", "true");
+
+    if (context.Request.Method == "OPTIONS")
+    {
+        context.Response.StatusCode = 204;
+        await context.Response.CompleteAsync();
+        return;
+    }
+
+    await next();
+});
+
 app.UseCors("AllowAll");
 
 // Seed the database
