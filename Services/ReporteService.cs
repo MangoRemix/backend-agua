@@ -207,15 +207,12 @@ public class ReporteService : IReporteService
         reporte.Salud.TieneVomitos = updateDto.TieneVomitos;
         reporte.Salud.TieneDolorAbdominal = updateDto.TieneDolorAbdominal;
 
-        // Limpiar personas afectadas anteriores y agregar las nuevas
+        // Limpiar personas afectadas anteriores (marcarlas para borrado en el contexto y resetear la lista local)
         if (reporte.Salud.PersonasAfectadas != null && reporte.Salud.PersonasAfectadas.Any())
         {
             _context.PersonasAfectadas.RemoveRange(reporte.Salud.PersonasAfectadas);
         }
-        else
-        {
-            reporte.Salud.PersonasAfectadas = new List<PersonaAfectada>();
-        }
+        reporte.Salud.PersonasAfectadas = new List<PersonaAfectada>();
         
         if (updateDto.PersonasAfectadas != null)
         {
