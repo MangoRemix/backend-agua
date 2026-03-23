@@ -92,23 +92,29 @@ builder.Services.AddSwaggerGen(c =>
 
 var app = builder.Build();
 
-// Logger de Depuración: Ver qué peticiones llegan realmente
+// MANEJADOR ULTRA-ROBUSTO DE CORS Y OPTIONS
 app.Use(async (context, next) =>
 {
-    var origin = context.Request.Headers.Origin.FirstOrDefault() ?? "No Origin";
-    var method = context.Request.Method;
-    var path = context.Request.Path;
-    Console.WriteLine($"[DEBUG REQUEST] {method} {path} from {origin}");
+    var origin = context.Request.Headers.Origin.FirstOrDefault() ?? "*";
     
+    // Siempre añadir cabeceras básicas para cada respuesta
+    context.Response.Headers.Append("Access-Control-Allow-Origin", origin);
+    context.Response.Headers.Append("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, PATCH, OPTIONS");
+    context.Response.Headers.Append("Access-Control-Allow-Headers", "Authorization, Content-Type, Accept, X-Requested-With, X-SignalR-User-Agent");
+    context.Response.Headers.Append("Access-Control-Allow-Credentials", "true");
+
+    if (context.Request.Method == "OPTIONS")
+    {
+        Console.WriteLine($"[CORS] Respondiendo a OPTIONS desde {origin}");
+        context.Response.StatusCode = 204;
+        await context.Response.CompleteAsync();
+        return;
+    }
+
     await next();
 });
 
-// Configuración de CORS única y limpia
-app.UseCors(policy => 
-    policy.SetIsOriginAllowed(_ => true)
-          .AllowAnyMethod()
-          .AllowAnyHeader()
-          .AllowCredentials());
+// app.UseCors(...) // Comentado para usar solo el inyector ultra-robusto
 
 // Seed the database
 using (var scope = app.Services.CreateScope())
