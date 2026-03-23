@@ -21,6 +21,8 @@ public class Reporte
     [Required]
     public EstatusReporte Estatus { get; set; } = EstatusReporte.Incompleto;
 
+    public bool IsLeido { get; set; } = false;
+
     // --- PROPIEDADES DE NAVEGACIÓN MODULARES ---
     public virtual ReporteSuministro Suministro { get; set; } = null!;
     public virtual ReporteIncidencia Incidencia { get; set; } = null!;

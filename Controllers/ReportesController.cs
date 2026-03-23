@@ -79,6 +79,15 @@ public class ReportesController : ControllerBase
         return Ok(reporte);
     }
 
+    [HttpPatch("{id}/read")]
+    public async Task<ActionResult<ReporteDto>> UpdateIsLeido(Guid id, [FromBody] bool isLeido)
+    {
+        var reporte = await _reporteService.UpdateIsLeidoAsync(id, isLeido);
+        if (reporte == null) return NotFound();
+
+        return Ok(reporte);
+    }
+
     [HttpGet("{id}")]
     public async Task<ActionResult<ReporteDto>> GetById(Guid id)
     {

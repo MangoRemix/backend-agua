@@ -232,6 +232,17 @@ public class ReporteService : IReporteService
         return await GetByIdAsync(reporte.Id);
     }
 
+    public async Task<ReporteDto?> UpdateIsLeidoAsync(Guid reporteId, bool isLeido)
+    {
+        var reporte = await _context.Reportes.FirstOrDefaultAsync(r => r.Id == reporteId);
+        if (reporte == null) return null;
+
+        reporte.IsLeido = isLeido;
+        await _context.SaveChangesAsync();
+
+        return await GetByIdAsync(reporte.Id);
+    }
+
     public async Task<ReporteDto?> GetByIdAsync(Guid id)
     {
         var reporte = await _context.Reportes
@@ -296,6 +307,7 @@ public class ReporteService : IReporteService
 
             FechaCreacion = reporte.FechaCreacion,
             Estatus = reporte.Estatus.ToString(),
+            IsLeido = reporte.IsLeido,
             
             Suministro = new ReporteSuministroDto
             {

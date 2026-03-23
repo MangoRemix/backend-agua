@@ -11,5 +11,6 @@ public interface IReporteService
     Task<ReporteDto?> UpdateSaludAsync(Guid reporteId, ReporteSaludUpdateDto updateDto);
     Task<ReporteDto?> UpdateParticipacionAsync(Guid reporteId, ReporteParticipacionUpdateDto updateDto);
     Task<ReporteDto?> GetByIdAsync(Guid id);
+    Task<ReporteDto?> UpdateIsLeidoAsync(Guid reporteId, bool isLeido);
     Task<IEnumerable<ReporteDto>> GetByComunidadAsync(Guid comunidadId);
 }
