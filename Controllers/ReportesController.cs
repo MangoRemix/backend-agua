@@ -102,4 +102,11 @@ public class ReportesController : ControllerBase
     {
         return Ok(await _reporteService.GetByComunidadAsync(comunidadId));
     }
+
+    [HttpGet("paged")]
+    public async Task<ActionResult<backend_agua.Dtos.Common.PagedResult<ReporteDto>>> GetPaged([FromQuery] ReporteFilterDto filter)
+    {
+        var result = await _reporteService.GetPagedAsync(filter);
+        return Ok(result);
+    }
 }

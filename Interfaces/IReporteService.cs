@@ -13,4 +13,5 @@ public interface IReporteService
     Task<ReporteDto?> GetByIdAsync(Guid id);
     Task<ReporteDto?> UpdateIsLeidoAsync(Guid reporteId, bool isLeido);
     Task<IEnumerable<ReporteDto>> GetByComunidadAsync(Guid comunidadId);
+    Task<backend_agua.Dtos.Common.PagedResult<ReporteDto>> GetPagedAsync(ReporteFilterDto filter);
 }

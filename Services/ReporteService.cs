@@ -291,6 +291,79 @@ public class ReporteService : IReporteService
         return await GetByIdAsync(reporte.Id);
     }
 
+    public async Task<IEnumerable<ReporteDto>> GetByComunidadAsync(Guid comunidadId)
+    {
+        var reportes = await _context.Reportes
+            .Include(r => r.Comunidad)
+                .ThenInclude(c => c.Comuna)
+                    .ThenInclude(c => c.Parroquia)
+            .Include(r => r.Usuario)
+            .Include(r => r.Suministro)
+            .Include(r => r.Incidencia)
+            .Include(r => r.Salud)
+                .ThenInclude(s => s.PersonasAfectadas)
+            .Include(r => r.Participacion)
+            .Where(r => r.ComunidadId == comunidadId)
+            .OrderByDescending(r => r.FechaCreacion)
+            .ToListAsync();
+
+        return reportes.Select(r => MapToDto(r));
+    }
+
+    public async Task<backend_agua.Dtos.Common.PagedResult<ReporteDto>> GetPagedAsync(ReporteFilterDto filter)
+    {
+        var query = _context.Reportes
+            .Include(r => r.Comunidad)
+                .ThenInclude(c => c.Comuna)
+                    .ThenInclude(c => c.Parroquia)
+            .Include(r => r.Usuario)
+            .Include(r => r.Suministro)
+            .Include(r => r.Incidencia)
+            .Include(r => r.Salud)
+                .ThenInclude(s => s.PersonasAfectadas)
+            .Include(r => r.Participacion)
+            .AsQueryable();
+
+        // Aplicar filtros
+        if (filter.ParroquiaId.HasValue)
+            query = query.Where(r => r.Comunidad.Comuna.ParroquiaId == filter.ParroquiaId);
+
+        if (filter.ComunaId.HasValue)
+            query = query.Where(r => r.Comunidad.ComunaId == filter.ComunaId);
+
+        if (filter.ComunidadId.HasValue)
+            query = query.Where(r => r.ComunidadId == filter.ComunidadId);
+
+        if (filter.IsLeido.HasValue)
+            query = query.Where(r => r.IsLeido == filter.IsLeido);
+
+        if (filter.FechaDesde.HasValue)
+            query = query.Where(r => r.FechaCreacion >= filter.FechaDesde.Value.ToUniversalTime());
+
+        if (filter.FechaHasta.HasValue)
+            query = query.Where(r => r.FechaCreacion <= filter.FechaHasta.Value.ToUniversalTime());
+
+        // Ordenar por fecha descendente por defecto
+        query = query.OrderByDescending(r => r.FechaCreacion);
+
+        var totalItems = await query.CountAsync();
+        
+        var items = await query
+            .Skip((filter.PageNumber - 1) * filter.PageSize)
+            .Take(filter.PageSize)
+            .ToListAsync();
+
+        var dtos = items.Select(r => MapToDto(r)).ToList();
+
+        return new backend_agua.Dtos.Common.PagedResult<ReporteDto>
+        {
+            Items = dtos,
+            TotalItems = totalItems,
+            PageNumber = filter.PageNumber,
+            PageSize = filter.PageSize
+        };
+    }
+
     public async Task<ReporteDto?> GetByIdAsync(Guid id)
     {
         var reporte = await _context.Reportes
@@ -310,24 +383,6 @@ public class ReporteService : IReporteService
         return MapToDto(reporte);
     }
 
-    public async Task<IEnumerable<ReporteDto>> GetByComunidadAsync(Guid comunidadId)
-    {
-        var reportes = await _context.Reportes
-            .Include(r => r.Comunidad)
-                .ThenInclude(c => c.Comuna)
-                    .ThenInclude(c => c.Parroquia)
-            .Include(r => r.Usuario)
-            .Include(r => r.Suministro)
-            .Include(r => r.Incidencia)
-            .Include(r => r.Salud)
-                .ThenInclude(s => s.PersonasAfectadas)
-            .Include(r => r.Participacion)
-            .Where(r => r.ComunidadId == comunidadId)
-            .OrderByDescending(r => r.FechaCreacion)
-            .ToListAsync();
-
-        return reportes.Select(MapToDto);
-    }
 
     private ReporteDto MapToDto(Reporte reporte)
     {
