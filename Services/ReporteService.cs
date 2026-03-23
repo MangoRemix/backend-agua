@@ -190,34 +190,56 @@ public class ReporteService : IReporteService
 
         if (reporte == null) return null;
 
+        // Asegurar que la sección de salud exista
+        if (reporte.Salud == null)
+        {
+            reporte.Salud = new ReporteSalud 
+            { 
+                Id = Guid.NewGuid(), 
+                ReporteId = reporte.Id,
+                PersonasAfectadas = new List<PersonaAfectada>()
+            };
+            _context.ReporteSalud.Add(reporte.Salud);
+        }
+
         reporte.Salud.TieneDiarrea = updateDto.TieneDiarrea;
         reporte.Salud.CantidadCasosDiarrea = updateDto.TieneDiarrea ? updateDto.CantidadCasosDiarrea : 0;
         reporte.Salud.TieneVomitos = updateDto.TieneVomitos;
         reporte.Salud.TieneDolorAbdominal = updateDto.TieneDolorAbdominal;
 
         // Limpiar personas afectadas anteriores y agregar las nuevas
-        _context.PersonasAfectadas.RemoveRange(reporte.Salud.PersonasAfectadas);
-        
-        foreach (var personaDto in updateDto.PersonasAfectadas)
+        if (reporte.Salud.PersonasAfectadas != null && reporte.Salud.PersonasAfectadas.Any())
         {
-            // Validar si la persona corresponde a una condición activa
-            bool esValida = false;
-            if (personaDto.Condicion == CondicionSalud.Diarrea && updateDto.TieneDiarrea) esValida = true;
-            if (personaDto.Condicion == CondicionSalud.Vomitos && updateDto.TieneVomitos) esValida = true;
-            if (personaDto.Condicion == CondicionSalud.DolorAbdominal && updateDto.TieneDolorAbdominal) esValida = true;
-
-            if (esValida)
+            _context.PersonasAfectadas.RemoveRange(reporte.Salud.PersonasAfectadas);
+        }
+        else
+        {
+            reporte.Salud.PersonasAfectadas = new List<PersonaAfectada>();
+        }
+        
+        if (updateDto.PersonasAfectadas != null)
+        {
+            foreach (var personaDto in updateDto.PersonasAfectadas)
             {
-                reporte.Salud.PersonasAfectadas.Add(new PersonaAfectada
+                // Validar si la persona corresponde a una condición activa
+                bool esValida = false;
+                if (personaDto.Condicion == CondicionSalud.Diarrea && updateDto.TieneDiarrea) esValida = true;
+                if (personaDto.Condicion == CondicionSalud.Vomitos && updateDto.TieneVomitos) esValida = true;
+                if (personaDto.Condicion == CondicionSalud.DolorAbdominal && updateDto.TieneDolorAbdominal) esValida = true;
+
+                if (esValida)
                 {
-                    Id = Guid.NewGuid(),
-                    ReporteSaludId = reporte.Salud.Id,
-                    Nombre = personaDto.Nombre,
-                    Apellido = personaDto.Apellido,
-                    Edad = personaDto.Edad,
-                    Cedula = personaDto.Cedula,
-                    Condicion = personaDto.Condicion
-                });
+                    reporte.Salud.PersonasAfectadas.Add(new PersonaAfectada
+                    {
+                        Id = Guid.NewGuid(),
+                        ReporteSaludId = reporte.Salud.Id,
+                        Nombre = personaDto.Nombre,
+                        Apellido = personaDto.Apellido,
+                        Edad = personaDto.Edad,
+                        Cedula = personaDto.Cedula,
+                        Condicion = personaDto.Condicion
+                    });
+                }
             }
         }
 
