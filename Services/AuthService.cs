@@ -56,6 +56,14 @@ public class AuthService : IAuthService
         };
     }
 
+    public async Task LogoutAsync()
+    {
+        // En una implementación stateless con JWT, el "logout" se maneja principalmente en el cliente
+        // eliminando el token. Si se requiere invalidar tokens en el servidor, se podría
+        // implementar una lista negra (blacklist) aquí.
+        await Task.CompletedTask;
+    }
+
     public string GenerateJwtToken(UsuarioDto usuario)
     {
         var jwtSettings = _configuration.GetSection("Jwt");

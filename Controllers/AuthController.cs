@@ -28,4 +28,11 @@ public class AuthController : ControllerBase
 
         return Ok(response);
     }
+
+    [HttpPost("logout")]
+    public async Task<IActionResult> Logout()
+    {
+        await _authService.LogoutAsync();
+        return Ok(new { message = "Sesión cerrada exitosamente" });
+    }
 }
