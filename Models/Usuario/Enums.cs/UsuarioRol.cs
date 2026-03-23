@@ -5,7 +5,7 @@ public enum UsuarioRol
     Admin, //0
     SuperAdmin, //1
     Gestor, //2
-    LiderComunitario, //3
-    LiderPartido, //4
+    LiderComunidad, //3
+    LiderComuna, //4
     LiderParroquia //5
 }
