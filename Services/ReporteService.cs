@@ -183,6 +183,8 @@ public class ReporteService : IReporteService
 
     public async Task<ReporteDto?> UpdateSaludAsync(Guid reporteId, ReporteSaludUpdateDto updateDto)
     {
+        Console.WriteLine($"[DEBUG] Entrando a UpdateSaludAsync para Reporte: {reporteId}");
+        
         var reporte = await _context.Reportes
             .Include(r => r.Salud)
                 .ThenInclude(s => s.PersonasAfectadas)
