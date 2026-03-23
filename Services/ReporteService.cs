@@ -349,6 +349,7 @@ public class ReporteService : IReporteService
         var totalItems = await query.CountAsync();
         
         var items = await query
+            .AsSplitQuery() // <-- ESTO OBLIGA A CARGAR BIEN LAS RELACIONES CON PAGINACIÓN
             .Skip((filter.PageNumber - 1) * filter.PageSize)
             .Take(filter.PageSize)
             .ToListAsync();
