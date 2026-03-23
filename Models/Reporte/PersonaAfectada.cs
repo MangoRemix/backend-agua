@@ -19,7 +19,7 @@ public class PersonaAfectada
     
     public int Edad { get; set; }
     
-    public string Cedula { get; set; } = string.Empty;
+    public string? Cedula { get; set; }
 
     [Required]
     public CondicionSalud Condicion { get; set; }

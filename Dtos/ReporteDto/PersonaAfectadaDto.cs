@@ -7,6 +7,6 @@ public class PersonaAfectadaDto
     public string Nombre { get; set; } = string.Empty;
     public string Apellido { get; set; } = string.Empty;
     public int Edad { get; set; }
-    public string Cedula { get; set; } = string.Empty;
+    public string? Cedula { get; set; }
     public CondicionSalud Condicion { get; set; }
 }
