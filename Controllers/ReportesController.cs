@@ -44,7 +44,7 @@ public class ReportesController : ControllerBase
     }
 
     [HttpPatch("{id}/suministro")]
-    public async Task<ActionResult<ReporteDto>> UpdateSuministro(Guid id, ReporteSuministroUpdateDto updateDto)
+    public async Task<ActionResult<ReporteDto>> UpdateSuministro(Guid id, [FromBody] ReporteSuministroUpdateDto updateDto)
     {
         var reporte = await _reporteService.UpdateSuministroAsync(id, updateDto);
         if (reporte == null) return NotFound();
@@ -53,7 +53,7 @@ public class ReportesController : ControllerBase
     }
 
     [HttpPatch("{id}/incidencias")]
-    public async Task<ActionResult<ReporteDto>> UpdateIncidencias(Guid id, ReporteIncidenciasUpdateDto updateDto)
+    public async Task<ActionResult<ReporteDto>> UpdateIncidencias(Guid id, [FromBody] ReporteIncidenciasUpdateDto updateDto)
     {
         var reporte = await _reporteService.UpdateIncidenciasAsync(id, updateDto);
         if (reporte == null) return NotFound();
@@ -62,7 +62,7 @@ public class ReportesController : ControllerBase
     }
 
     [HttpPatch("{id}/salud")]
-    public async Task<ActionResult<ReporteDto>> UpdateSalud(Guid id, ReporteSaludUpdateDto updateDto)
+    public async Task<ActionResult<ReporteDto>> UpdateSalud(Guid id, [FromBody] ReporteSaludUpdateDto updateDto)
     {
         var reporte = await _reporteService.UpdateSaludAsync(id, updateDto);
         if (reporte == null) return NotFound();
@@ -71,7 +71,7 @@ public class ReportesController : ControllerBase
     }
 
     [HttpPatch("{id}/participacion")]
-    public async Task<ActionResult<ReporteDto>> UpdateParticipacion(Guid id, ReporteParticipacionUpdateDto updateDto)
+    public async Task<ActionResult<ReporteDto>> UpdateParticipacion(Guid id, [FromBody] ReporteParticipacionUpdateDto updateDto)
     {
         var reporte = await _reporteService.UpdateParticipacionAsync(id, updateDto);
         if (reporte == null) return NotFound();
