@@ -15,8 +15,10 @@ public class ReporteSalud
     public int CantidadCasosDiarrea { get; set; }
     
     public bool TieneVomitos { get; set; }
+    public int CantidadCasosVomitos { get; set; }
     
     public bool TieneDolorAbdominal { get; set; }
+    public int CantidadCasosDolorAbdominal { get; set; }
 
     public ICollection<PersonaAfectada> PersonasAfectadas { get; set; } = new List<PersonaAfectada>();
 }

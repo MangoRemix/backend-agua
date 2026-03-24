@@ -28,7 +28,8 @@ public enum CondicionSalud
 {
     Diarrea,
     Vomitos,
-    DolorAbdominal
+    DolorAbdominal,
+    Todos
 }
 
 public enum PartidoPolitico

@@ -226,7 +226,9 @@ public class ReporteService : IReporteService
         reporte.Salud.TieneDiarrea = updateDto.TieneDiarrea;
         reporte.Salud.CantidadCasosDiarrea = updateDto.TieneDiarrea ? updateDto.CantidadCasosDiarrea : 0;
         reporte.Salud.TieneVomitos = updateDto.TieneVomitos;
+        reporte.Salud.CantidadCasosVomitos = updateDto.TieneVomitos ? updateDto.CantidadCasosVomitos : 0;
         reporte.Salud.TieneDolorAbdominal = updateDto.TieneDolorAbdominal;
+        reporte.Salud.CantidadCasosDolorAbdominal = updateDto.TieneDolorAbdominal ? updateDto.CantidadCasosDolorAbdominal : 0;
 
         // 1. Borrado físico en DB
         await _context.Database.ExecuteSqlRawAsync(
@@ -600,7 +602,9 @@ public class ReporteService : IReporteService
                 TieneDiarrea = reporte.Salud.TieneDiarrea,
                 CantidadCasosDiarrea = reporte.Salud.CantidadCasosDiarrea,
                 TieneVomitos = reporte.Salud.TieneVomitos,
+                CantidadCasosVomitos = reporte.Salud.CantidadCasosVomitos,
                 TieneDolorAbdominal = reporte.Salud.TieneDolorAbdominal,
+                CantidadCasosDolorAbdominal = reporte.Salud.CantidadCasosDolorAbdominal,
                 PersonasAfectadas = reporte.Salud.PersonasAfectadas?.Select(p => new PersonaAfectadaDto
                 {
                     Nombre = p.Nombre,
