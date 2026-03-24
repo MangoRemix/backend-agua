@@ -109,4 +109,15 @@ public class ReportesController : ControllerBase
         var result = await _reporteService.GetPagedAsync(filter);
         return Ok(result);
     }
+
+    [HttpGet("comuna/{comunaId}/dashboard")]
+    public async Task<ActionResult<ComunaDashboardDto>> GetComunaDashboard(
+        Guid comunaId, 
+        [FromQuery] int pageNumber = 1, 
+        [FromQuery] int pageSize = 12, 
+        [FromQuery] string status = "TODAS")
+    {
+        var result = await _reporteService.GetComunaDashboardAsync(comunaId, pageNumber, pageSize, status);
+        return Ok(result);
+    }
 }

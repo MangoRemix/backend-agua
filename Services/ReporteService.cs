@@ -365,6 +365,88 @@ public class ReporteService : IReporteService
         };
     }
 
+    public async Task<ComunaDashboardDto> GetComunaDashboardAsync(Guid comunaId, int pageNumber, int pageSize, string statusFilter)
+    {
+        var tz = GetCaracasTimeZone();
+        var todayVzla = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, tz).Date;
+
+        var comuna = await _context.Comunas
+            .Include(c => c.Comunidades)
+            .FirstOrDefaultAsync(c => c.Id == comunaId);
+
+        if (comuna == null) return new ComunaDashboardDto();
+
+        var comunidadesIds = comuna.Comunidades.Select(c => c.Id).ToList();
+        
+        // Obtener el último reporte de cada comunidad de esta comuna
+        var ultimosReportes = await _context.Reportes
+            .Where(r => comunidadesIds.Contains(r.ComunidadId))
+            .OrderByDescending(r => r.FechaCreacion)
+            .ToListAsync();
+
+        var comunidadStatusList = new List<ComunidadStatusDto>();
+
+        foreach (var comunidad in comuna.Comunidades)
+        {
+            var ultimoReporte = ultimosReportes.FirstOrDefault(r => r.ComunidadId == comunidad.Id);
+            string status = "PENDIENTE";
+            string texto = "SIN REPORTES";
+
+            if (ultimoReporte != null)
+            {
+                var fechaVzla = TimeZoneInfo.ConvertTimeFromUtc(ultimoReporte.FechaCreacion, tz);
+                if (fechaVzla.Date == todayVzla)
+                {
+                    status = "RECIBIDO";
+                    texto = $"HOY, {fechaVzla:hh:mm tt}";
+                }
+                else
+                {
+                    var dias = (todayVzla - fechaVzla.Date).Days;
+                    if (dias == 1) texto = $"AYER, {fechaVzla:hh:mm tt}";
+                    else texto = $"HACE {dias} DÍAS";
+                }
+            }
+
+            comunidadStatusList.Add(new ComunidadStatusDto
+            {
+                Id = comunidad.Id,
+                Nombre = comunidad.Nombre,
+                Status = status,
+                UltimaFechaReporte = ultimoReporte?.FechaCreacion,
+                UltimoReporteTexto = texto
+            });
+        }
+
+        // Aplicar filtro
+        var filteredList = comunidadStatusList;
+        if (statusFilter?.ToUpper() == "RECIBIDOS")
+            filteredList = filteredList.Where(c => c.Status == "RECIBIDO").ToList();
+        else if (statusFilter?.ToUpper() == "PENDIENTES")
+            filteredList = filteredList.Where(c => c.Status == "PENDIENTE").ToList();
+
+        var totalItems = filteredList.Count;
+        var pagedItems = filteredList
+            .OrderBy(c => c.Nombre)
+            .Skip((pageNumber - 1) * pageSize)
+            .Take(pageSize)
+            .ToList();
+
+        return new ComunaDashboardDto
+        {
+            ComunaNombre = comuna.Nombre,
+            TotalComunidades = comuna.Comunidades.Count,
+            EnviadosHoy = comunidadStatusList.Count(c => c.Status == "RECIBIDO"),
+            ListadoComunidades = new backend_agua.Dtos.Common.PagedResult<ComunidadStatusDto>
+            {
+                Items = pagedItems,
+                TotalItems = totalItems,
+                PageNumber = pageNumber,
+                PageSize = pageSize
+            }
+        };
+    }
+
     public async Task<ReporteDto?> GetByIdAsync(Guid id)
     {
         var reporte = await _context.Reportes
