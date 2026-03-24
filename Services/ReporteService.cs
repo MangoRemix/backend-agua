@@ -252,6 +252,7 @@ public class ReporteService : IReporteService
                 if (personaDto.Condicion == CondicionSalud.Diarrea && updateDto.TieneDiarrea) esValida = true;
                 if (personaDto.Condicion == CondicionSalud.Vomitos && updateDto.TieneVomitos) esValida = true;
                 if (personaDto.Condicion == CondicionSalud.DolorAbdominal && updateDto.TieneDolorAbdominal) esValida = true;
+                if (personaDto.Condicion == CondicionSalud.Todos && (updateDto.TieneDiarrea || updateDto.TieneVomitos || updateDto.TieneDolorAbdominal)) esValida = true;
 
                 if (esValida)
                 {
