@@ -97,6 +97,28 @@ public class ReporteService : IReporteService
             throw new InvalidOperationException("No se pueden iniciar reportes fuera del horario permitido (8:00 PM - 9:00 PM Venezuela).");
         }
 
+        var tz = GetCaracasTimeZone();
+        var todayVzla = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, tz).Date;
+
+        // Buscar reporte existente de hoy para esta comunidad
+        // NOTA: Traemos los hijos para que el dashboard y el stepper tengan la data si ya se empezó
+        var reporteExistente = await _context.Reportes
+            .Include(r => r.Suministro)
+            .Include(r => r.Incidencia)
+            .Include(r => r.Salud)
+                .ThenInclude(s => s.PersonasAfectadas)
+            .Include(r => r.Participacion)
+            .Where(r => r.ComunidadId == comunidadId)
+            .ToListAsync();
+
+        var deHoy = reporteExistente.FirstOrDefault(r => 
+            TimeZoneInfo.ConvertTimeFromUtc(r.FechaCreacion, tz).Date == todayVzla);
+
+        if (deHoy != null)
+        {
+            return MapToDto(deHoy);
+        }
+
         var reporteId = Guid.NewGuid();
         var reporte = new Reporte
         {
@@ -252,6 +274,9 @@ public class ReporteService : IReporteService
     public async Task<ReporteDto?> UpdateParticipacionAsync(Guid reporteId, ReporteParticipacionUpdateDto updateDto)
     {
         var reporte = await _context.Reportes
+            .Include(r => r.Suministro)
+            .Include(r => r.Incidencia)
+            .Include(r => r.Salud)
             .Include(r => r.Participacion)
             .FirstOrDefaultAsync(r => r.Id == reporteId);
 
@@ -273,11 +298,44 @@ public class ReporteService : IReporteService
         reporte.Participacion.TieneInstitucionNacional = updateDto.TieneInstitucionNacional;
         reporte.Participacion.DetalleInstitucionNacional = updateDto.TieneInstitucionNacional ? updateDto.DetalleInstitucionNacional : null;
 
-        // El paso 4 es el último paso del stepper, por lo que marcamos el reporte como completado
-        reporte.Estatus = EstatusReporte.Completado;
+        // Validar si el reporte está realmente completo para cambiar su estatus
+        if (EsReporteRealmenteCompleto(reporte))
+        {
+            reporte.Estatus = EstatusReporte.Completado;
+        }
+        else
+        {
+            reporte.Estatus = EstatusReporte.Incompleto;
+        }
 
         await _context.SaveChangesAsync();
         return await GetByIdAsync(reporte.Id);
+    }
+
+    private bool EsReporteRealmenteCompleto(Reporte reporte)
+    {
+        if (reporte == null) return false;
+
+        // 1. Suministro: Debe tener al menos una forma básica de obtención de agua marcada
+        bool suministroLleno = reporte.Suministro != null && 
+                             (reporte.Suministro.LlegaPorTuberia || 
+                              reporte.Suministro.RecibeCisterna || 
+                              reporte.Suministro.TieneTanque);
+
+        // 2. Incidencias: Al menos una respuesta positiva o que el objeto exista y haya pasado por el flujo
+        bool incidenciasOk = reporte.Incidencia != null;
+
+        // 3. Salud: Se considera lleno si se respondieron las preguntas básicas
+        bool saludOk = reporte.Salud != null;
+
+        // 4. Participación: Validamos que al menos una de las opciones de participación sea verdadera
+        bool participacionLlena = reporte.Participacion != null && 
+                                (reporte.Participacion.TienePartido || 
+                                 reporte.Participacion.TieneAlcaldia || 
+                                 reporte.Participacion.TieneGobernacion || 
+                                 reporte.Participacion.TieneInstitucionNacional);
+
+        return suministroLleno && participacionLlena && incidenciasOk && saludOk;
     }
 
     public async Task<ReporteDto?> UpdateIsLeidoAsync(Guid reporteId, bool isLeido)
