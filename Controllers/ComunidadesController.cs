@@ -33,10 +33,9 @@ public class ComunidadesController : ControllerBase
         return Ok(comunidad);
     }
 
-    [HttpGet("comuna/{comunaId}")]
-    public async Task<ActionResult<PagedResult<ComunidadDto>>> GetComunidadesByComuna(Guid comunaId, [FromQuery] ComunidadFilterDto filter)
+    [HttpGet("comuna")]
+    public async Task<ActionResult<PagedResult<ComunidadDto>>> GetComunidadesByComuna([FromQuery] ComunidadFilterDto filter)
     {
-        filter.ComunaId = comunaId;
         return Ok(await _comunidadService.GetPagedAsync(filter));
     }
 
