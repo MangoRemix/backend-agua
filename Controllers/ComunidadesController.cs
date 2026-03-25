@@ -1,4 +1,6 @@
+using backend_agua.Dtos.Common;
 using backend_agua.Dtos.Comunidad;
+using backend_agua.Dtos.ComunidadDto;
 using backend_agua.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -32,9 +34,10 @@ public class ComunidadesController : ControllerBase
     }
 
     [HttpGet("comuna/{comunaId}")]
-    public async Task<ActionResult<IEnumerable<ComunidadDto>>> GetComunidadesByComuna(Guid comunaId)
+    public async Task<ActionResult<PagedResult<ComunidadDto>>> GetComunidadesByComuna(Guid comunaId, [FromQuery] ComunidadFilterDto filter)
     {
-        return Ok(await _comunidadService.GetByComunaIdAsync(comunaId));
+        filter.ComunaId = comunaId;
+        return Ok(await _comunidadService.GetPagedAsync(filter));
     }
 
     [HttpPost]

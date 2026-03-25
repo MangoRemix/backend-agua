@@ -1,3 +1,5 @@
+using backend_agua.Dtos.Common;
+using backend_agua.Dtos.ComunidadDto;
 using backend_agua.Dtos.Comunidad;
 using backend_agua.Infraestructure.Database;
 using backend_agua.Interfaces;
@@ -70,6 +72,57 @@ public class ComunidadService : IComunidadService
             ComunaId = c.ComunaId,
             ComunaNombre = c.Comuna.Nombre
         });
+    }
+
+    public async Task<PagedResult<ComunidadDto>> GetPagedAsync(ComunidadFilterDto filter)
+    {
+        var query = _context.Comunidades
+            .Include(c => c.Comuna)
+            .AsQueryable();
+
+        // Filtros
+        if (filter.ComunaId.HasValue)
+            query = query.Where(c => c.ComunaId == filter.ComunaId.Value);
+
+        if (filter.ComunidadId.HasValue)
+            query = query.Where(c => c.Id == filter.ComunidadId.Value);
+
+        if (!string.IsNullOrWhiteSpace(filter.NombreLider))
+            query = query.Where(c => EF.Functions.ILike(c.LiderNombre!, $"%{filter.NombreLider}%"));
+
+        if (!string.IsNullOrWhiteSpace(filter.CedulaLider))
+            query = query.Where(c => EF.Functions.ILike(c.LiderCedula!, $"%{filter.CedulaLider}%"));
+
+        if (!string.IsNullOrWhiteSpace(filter.TlfLider))
+            query = query.Where(c => EF.Functions.ILike(c.LiderTlf!, $"%{filter.TlfLider}%"));
+
+        // Ordenamiento (opcional, pero buena práctica con paginación)
+        query = query.OrderBy(c => c.Nombre);
+
+        var totalItems = await query.CountAsync();
+
+        var items = await query
+            .Skip((filter.PageNumber - 1) * filter.PageSize)
+            .Take(filter.PageSize)
+            .Select(c => new ComunidadDto
+            {
+                Id = c.Id,
+                Nombre = c.Nombre,
+                LiderNombre = c.LiderNombre,
+                LiderCedula = c.LiderCedula,
+                LiderTlf = c.LiderTlf,
+                ComunaId = c.ComunaId,
+                ComunaNombre = c.Comuna.Nombre
+            })
+            .ToListAsync();
+
+        return new PagedResult<ComunidadDto>
+        {
+            Items = items,
+            TotalItems = totalItems,
+            PageNumber = filter.PageNumber,
+            PageSize = filter.PageSize
+        };
     }
 
     public async Task<ComunidadDto> CreateAsync(ComunidadCreateDto createDto)
