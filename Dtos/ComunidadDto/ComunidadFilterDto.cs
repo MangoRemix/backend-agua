@@ -9,4 +9,5 @@ public class ComunidadFilterDto : PaginationParams
     public string? CedulaLider { get; set; }
     public string? TlfLider { get; set; }
     public string? NombreLider { get; set; }
+    public bool Paginar { get; set; } = true;
 }

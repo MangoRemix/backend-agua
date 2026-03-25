@@ -100,28 +100,47 @@ public class ComunidadService : IComunidadService
         query = query.OrderBy(c => c.Nombre);
 
         var totalItems = await query.CountAsync();
+        List<ComunidadDto> items;
 
-        var items = await query
-            .Skip((filter.PageNumber - 1) * filter.PageSize)
-            .Take(filter.PageSize)
-            .Select(c => new ComunidadDto
-            {
-                Id = c.Id,
-                Nombre = c.Nombre,
-                LiderNombre = c.LiderNombre,
-                LiderCedula = c.LiderCedula,
-                LiderTlf = c.LiderTlf,
-                ComunaId = c.ComunaId,
-                ComunaNombre = c.Comuna.Nombre
-            })
-            .ToListAsync();
+        if (filter.Paginar)
+        {
+            items = await query
+                .Skip((filter.PageNumber - 1) * filter.PageSize)
+                .Take(filter.PageSize)
+                .Select(c => new ComunidadDto
+                {
+                    Id = c.Id,
+                    Nombre = c.Nombre,
+                    LiderNombre = c.LiderNombre,
+                    LiderCedula = c.LiderCedula,
+                    LiderTlf = c.LiderTlf,
+                    ComunaId = c.ComunaId,
+                    ComunaNombre = c.Comuna.Nombre
+                })
+                .ToListAsync();
+        }
+        else
+        {
+            items = await query
+                .Select(c => new ComunidadDto
+                {
+                    Id = c.Id,
+                    Nombre = c.Nombre,
+                    LiderNombre = c.LiderNombre,
+                    LiderCedula = c.LiderCedula,
+                    LiderTlf = c.LiderTlf,
+                    ComunaId = c.ComunaId,
+                    ComunaNombre = c.Comuna.Nombre
+                })
+                .ToListAsync();
+        }
 
         return new PagedResult<ComunidadDto>
         {
             Items = items,
             TotalItems = totalItems,
-            PageNumber = filter.PageNumber,
-            PageSize = filter.PageSize
+            PageNumber = filter.Paginar ? filter.PageNumber : 1,
+            PageSize = filter.Paginar ? filter.PageSize : totalItems
         };
     }
 
