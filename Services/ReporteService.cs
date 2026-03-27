@@ -161,19 +161,9 @@ public class ReporteService : IReporteService
 
         reporte.Suministro.RecibeCisterna = updateDto.RecibeCisterna;
         
-        // Manejo de Cisternas (Similar a Salud/PersonasAfectadas)
-        // 1. Borrado físico de cisternas previas
-        await _context.Database.ExecuteSqlRawAsync(
-            "DELETE FROM \"Cisternas\" WHERE \"ReporteSuministroId\" = {0}", 
-            reporte.Suministro.Id);
-
-        // 2. Limpiar el rastreador de EF
-        var trackedEntries = _context.ChangeTracker.Entries<Cisterna>()
-            .Where(e => e.Entity.ReporteSuministroId == reporte.Suministro.Id)
-            .ToList();
-        foreach (var entry in trackedEntries) entry.State = EntityState.Detached;
-
-        reporte.Suministro.Cisternas = new List<Cisterna>();
+        // Manejo de Cisternas: Limpiar anteriores y agregar nuevas usando EF (evita conflictos de tracking)
+        _context.Cisternas.RemoveRange(reporte.Suministro.Cisternas);
+        reporte.Suministro.Cisternas.Clear();
 
         if (updateDto.RecibeCisterna && updateDto.Cisternas != null)
         {
@@ -190,19 +180,9 @@ public class ReporteService : IReporteService
 
         reporte.Suministro.TieneTanque = updateDto.TieneTanque;
         
-        // Manejo de Tanques
-        // 1. Borrado físico
-        await _context.Database.ExecuteSqlRawAsync(
-            "DELETE FROM \"Tanques\" WHERE \"ReporteSuministroId\" = {0}", 
-            reporte.Suministro.Id);
-
-        // 2. Limpiar el rastreador
-        var trackedTanqueEntries = _context.ChangeTracker.Entries<Tanque>()
-            .Where(e => e.Entity.ReporteSuministroId == reporte.Suministro.Id)
-            .ToList();
-        foreach (var entry in trackedTanqueEntries) entry.State = EntityState.Detached;
-
-        reporte.Suministro.Tanques = new List<Tanque>();
+        // Manejo de Tanques: Limpiar anteriores y agregar nuevos usando EF
+        _context.Tanques.RemoveRange(reporte.Suministro.Tanques);
+        reporte.Suministro.Tanques.Clear();
 
         if (updateDto.TieneTanque && updateDto.Tanques != null)
         {
@@ -286,18 +266,9 @@ public class ReporteService : IReporteService
         reporte.Salud.TieneDolorAbdominal = updateDto.TieneDolorAbdominal;
         reporte.Salud.CantidadCasosDolorAbdominal = updateDto.TieneDolorAbdominal ? updateDto.CantidadCasosDolorAbdominal : 0;
 
-        // 1. Borrado físico en DB
-        await _context.Database.ExecuteSqlRawAsync(
-            "DELETE FROM \"PersonasAfectadas\" WHERE \"ReporteSaludId\" = {0}", 
-            reporte.Salud.Id);
-            
-        // 2. Limpiar el rastreador de EF para evitar que intente "actualizar" registros antiguos (CAUSA DEL ERROR DE CONCURRENCIA)
-        var trackedEntries = _context.ChangeTracker.Entries<PersonaAfectada>()
-            .Where(e => e.Entity.ReporteSaludId == reporte.Salud.Id)
-            .ToList();
-        foreach (var entry in trackedEntries) entry.State = EntityState.Detached;
-
-        reporte.Salud.PersonasAfectadas = new List<PersonaAfectada>();
+        // Manejo de PersonasAfectadas: Limpiar anteriores y agregar nuevas usando EF
+        _context.PersonasAfectadas.RemoveRange(reporte.Salud.PersonasAfectadas);
+        reporte.Salud.PersonasAfectadas.Clear();
         
         if (updateDto.PersonasAfectadas != null)
         {
@@ -312,7 +283,6 @@ public class ReporteService : IReporteService
 
                 if (esValida)
                 {
-                    // IMPORTANTE: Dejar que el Id lo asigne EF/DB para asegurar el estado 'Added'
                     reporte.Salud.PersonasAfectadas.Add(new PersonaAfectada
                     {
                         ReporteSaludId = reporte.Salud.Id,
