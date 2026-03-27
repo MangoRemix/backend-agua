@@ -42,12 +42,24 @@ public class ReporteSuministroDto
     public TimeSpan? HorasSuministro { get; set; }
     public string? Caudal { get; set; }
     public bool RecibeCisterna { get; set; }
-    public int? LitrosCisterna { get; set; }
-    public string? TipoCisterna { get; set; }
+    public List<CisternaDto> Cisternas { get; set; } = new();
     public bool TieneTanque { get; set; }
-    public string? TipoTanque { get; set; }
+    public List<TanqueDto> Tanques { get; set; } = new();
     public int FamiliasBeneficiadas { get; set; }
     public int? ApoyoAdicionalLitros { get; set; }
+}
+
+public class CisternaDto
+{
+    public Guid Id { get; set; }
+    public int Litros { get; set; }
+    public string Tipo { get; set; } = string.Empty;
+}
+
+public class TanqueDto
+{
+    public Guid Id { get; set; }
+    public string Tipo { get; set; } = string.Empty;
 }
 
 public class ReporteIncidenciasDto

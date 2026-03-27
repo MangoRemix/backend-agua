@@ -104,6 +104,9 @@ public class ReporteService : IReporteService
         // NOTA: Traemos los hijos para que el dashboard y el stepper tengan la data si ya se empezó
         var reporteExistente = await _context.Reportes
             .Include(r => r.Suministro)
+                .ThenInclude(s => s.Cisternas)
+            .Include(r => r.Suministro)
+                .ThenInclude(s => s.Tanques)
             .Include(r => r.Incidencia)
             .Include(r => r.Salud)
                 .ThenInclude(s => s.PersonasAfectadas)
@@ -145,6 +148,9 @@ public class ReporteService : IReporteService
     {
         var reporte = await _context.Reportes
             .Include(r => r.Suministro)
+                .ThenInclude(s => s.Cisternas)
+            .Include(r => r.Suministro)
+                .ThenInclude(s => s.Tanques)
             .FirstOrDefaultAsync(r => r.Id == reporteId);
 
         if (reporte == null) return null;
@@ -154,11 +160,61 @@ public class ReporteService : IReporteService
         reporte.Suministro.Caudal = updateDto.LlegaPorTuberia ? updateDto.Caudal : null;
 
         reporte.Suministro.RecibeCisterna = updateDto.RecibeCisterna;
-        reporte.Suministro.LitrosCisterna = updateDto.RecibeCisterna ? updateDto.LitrosCisterna : null;
-        reporte.Suministro.TipoCisterna = updateDto.RecibeCisterna ? updateDto.TipoCisterna : null;
+        
+        // Manejo de Cisternas (Similar a Salud/PersonasAfectadas)
+        // 1. Borrado físico de cisternas previas
+        await _context.Database.ExecuteSqlRawAsync(
+            "DELETE FROM \"Cisternas\" WHERE \"ReporteSuministroId\" = {0}", 
+            reporte.Suministro.Id);
+
+        // 2. Limpiar el rastreador de EF
+        var trackedEntries = _context.ChangeTracker.Entries<Cisterna>()
+            .Where(e => e.Entity.ReporteSuministroId == reporte.Suministro.Id)
+            .ToList();
+        foreach (var entry in trackedEntries) entry.State = EntityState.Detached;
+
+        reporte.Suministro.Cisternas = new List<Cisterna>();
+
+        if (updateDto.RecibeCisterna && updateDto.Cisternas != null)
+        {
+            foreach (var cisternaDto in updateDto.Cisternas)
+            {
+                reporte.Suministro.Cisternas.Add(new Cisterna
+                {
+                    ReporteSuministroId = reporte.Suministro.Id,
+                    Litros = cisternaDto.Litros,
+                    Tipo = cisternaDto.Tipo
+                });
+            }
+        }
 
         reporte.Suministro.TieneTanque = updateDto.TieneTanque;
-        reporte.Suministro.TipoTanque = updateDto.TieneTanque ? updateDto.TipoTanque : null;
+        
+        // Manejo de Tanques
+        // 1. Borrado físico
+        await _context.Database.ExecuteSqlRawAsync(
+            "DELETE FROM \"Tanques\" WHERE \"ReporteSuministroId\" = {0}", 
+            reporte.Suministro.Id);
+
+        // 2. Limpiar el rastreador
+        var trackedTanqueEntries = _context.ChangeTracker.Entries<Tanque>()
+            .Where(e => e.Entity.ReporteSuministroId == reporte.Suministro.Id)
+            .ToList();
+        foreach (var entry in trackedTanqueEntries) entry.State = EntityState.Detached;
+
+        reporte.Suministro.Tanques = new List<Tanque>();
+
+        if (updateDto.TieneTanque && updateDto.Tanques != null)
+        {
+            foreach (var tanqueDto in updateDto.Tanques)
+            {
+                reporte.Suministro.Tanques.Add(new Tanque
+                {
+                    ReporteSuministroId = reporte.Suministro.Id,
+                    Tipo = tanqueDto.Tipo
+                });
+            }
+        }
 
         reporte.Suministro.FamiliasBeneficiadas = updateDto.FamiliasBeneficiadas;
         reporte.Suministro.ApoyoAdicionalLitros = updateDto.ApoyoAdicionalLitros;
@@ -278,6 +334,7 @@ public class ReporteService : IReporteService
     {
         var reporte = await _context.Reportes
             .Include(r => r.Suministro)
+                .ThenInclude(s => s.Cisternas)
             .Include(r => r.Incidencia)
             .Include(r => r.Salud)
             .Include(r => r.Participacion)
@@ -322,8 +379,8 @@ public class ReporteService : IReporteService
         // 1. Suministro: Debe tener al menos una forma básica de obtención de agua marcada
         bool suministroLleno = reporte.Suministro != null && 
                              (reporte.Suministro.LlegaPorTuberia || 
-                              reporte.Suministro.RecibeCisterna || 
-                              reporte.Suministro.TieneTanque);
+                              (reporte.Suministro.RecibeCisterna && reporte.Suministro.Cisternas.Any()) || 
+                              (reporte.Suministro.TieneTanque && reporte.Suministro.Tanques.Any()));
 
         // 2. Incidencias: Al menos una respuesta positiva o que el objeto exista y haya pasado por el flujo
         bool incidenciasOk = reporte.Incidencia != null;
@@ -360,6 +417,9 @@ public class ReporteService : IReporteService
                     .ThenInclude(c => c.Parroquia)
             .Include(r => r.Usuario)
             .Include(r => r.Suministro)
+                .ThenInclude(s => s.Cisternas)
+            .Include(r => r.Suministro)
+                .ThenInclude(s => s.Tanques)
             .Include(r => r.Incidencia)
             .Include(r => r.Salud)
                 .ThenInclude(s => s.PersonasAfectadas)
@@ -379,6 +439,9 @@ public class ReporteService : IReporteService
                     .ThenInclude(c => c.Parroquia)
             .Include(r => r.Usuario)
             .Include(r => r.Suministro)
+                .ThenInclude(s => s.Cisternas)
+            .Include(r => r.Suministro)
+                .ThenInclude(s => s.Tanques)
             .Include(r => r.Incidencia)
             .Include(r => r.Salud)
                 .ThenInclude(s => s.PersonasAfectadas)
@@ -516,6 +579,9 @@ public class ReporteService : IReporteService
                     .ThenInclude(c => c.Parroquia)
             .Include(r => r.Usuario)
             .Include(r => r.Suministro)
+                .ThenInclude(s => s.Cisternas)
+            .Include(r => r.Suministro)
+                .ThenInclude(s => s.Tanques)
             .Include(r => r.Incidencia)
             .Include(r => r.Salud)
                 .ThenInclude(s => s.PersonasAfectadas)
@@ -571,10 +637,18 @@ public class ReporteService : IReporteService
                 HorasSuministro = reporte.Suministro.HorasSuministro,
                 Caudal = reporte.Suministro.Caudal?.ToString(),
                 RecibeCisterna = reporte.Suministro.RecibeCisterna,
-                LitrosCisterna = reporte.Suministro.LitrosCisterna,
-                TipoCisterna = reporte.Suministro.TipoCisterna?.ToString(),
+                Cisternas = reporte.Suministro.Cisternas?.Select(c => new CisternaDto
+                {
+                    Id = c.Id,
+                    Litros = c.Litros,
+                    Tipo = c.Tipo.ToString()
+                }).ToList() ?? new List<CisternaDto>(),
                 TieneTanque = reporte.Suministro.TieneTanque,
-                TipoTanque = reporte.Suministro.TipoTanque?.ToString(),
+                Tanques = reporte.Suministro.Tanques?.Select(t => new TanqueDto
+                {
+                    Id = t.Id,
+                    Tipo = t.Tipo.ToString()
+                }).ToList() ?? new List<TanqueDto>(),
                 FamiliasBeneficiadas = reporte.Suministro.FamiliasBeneficiadas,
                 ApoyoAdicionalLitros = reporte.Suministro.ApoyoAdicionalLitros
             },

@@ -17,11 +17,10 @@ public class ReporteSuministro
     public CaudalAgua? Caudal { get; set; }
 
     public bool RecibeCisterna { get; set; }
-    public int? LitrosCisterna { get; set; }
-    public TipoCisterna? TipoCisterna { get; set; }
+    public List<Cisterna> Cisternas { get; set; } = new();
 
     public bool TieneTanque { get; set; }
-    public TipoTanque? TipoTanque { get; set; }
+    public List<Tanque> Tanques { get; set; } = new();
 
     public int FamiliasBeneficiadas { get; set; }
     

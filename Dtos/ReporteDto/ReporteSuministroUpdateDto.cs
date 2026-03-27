@@ -10,14 +10,24 @@ public class ReporteSuministroUpdateDto
     public CaudalAgua? Caudal { get; set; }
 
     public bool RecibeCisterna { get; set; }
-    public int? LitrosCisterna { get; set; }
-    public TipoCisterna? TipoCisterna { get; set; }
+    public List<CisternaUpdateDto> Cisternas { get; set; } = new();
 
     public bool TieneTanque { get; set; }
-    public TipoTanque? TipoTanque { get; set; }
+    public List<TanqueUpdateDto> Tanques { get; set; } = new();
 
     [Required]
     public int FamiliasBeneficiadas { get; set; }
     
     public int? ApoyoAdicionalLitros { get; set; }
+}
+
+public class CisternaUpdateDto
+{
+    public int Litros { get; set; }
+    public TipoCisterna Tipo { get; set; }
+}
+
+public class TanqueUpdateDto
+{
+    public TipoTanque Tipo { get; set; }
 }

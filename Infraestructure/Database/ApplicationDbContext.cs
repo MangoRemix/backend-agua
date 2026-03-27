@@ -21,6 +21,8 @@ public class ApplicationDbContext : DbContext
     public DbSet<ReporteSalud> ReporteSalud { get; set; }
     public DbSet<ReporteParticipacion> ReporteParticipaciones { get; set; }
     public DbSet<PersonaAfectada> PersonasAfectadas { get; set; }
+    public DbSet<Cisterna> Cisternas { get; set; }
+    public DbSet<Tanque> Tanques { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
