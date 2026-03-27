@@ -23,11 +23,13 @@ public class ReporteSuministroUpdateDto
 
 public class CisternaUpdateDto
 {
+    public Guid? Id { get; set; }
     public int Litros { get; set; }
     public TipoCisterna Tipo { get; set; }
 }
 
 public class TanqueUpdateDto
 {
+    public Guid? Id { get; set; }
     public TipoTanque Tipo { get; set; }
 }
