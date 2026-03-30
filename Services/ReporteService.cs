@@ -243,6 +243,7 @@ public class ReporteService : IReporteService
     {
         var reporte = await _context.Reportes
             .Include(r => r.Salud)
+                .ThenInclude(s => s.PersonasAfectadas)
             .FirstOrDefaultAsync(r => r.Id == reporteId);
 
         if (reporte == null) return null;
