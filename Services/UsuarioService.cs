@@ -83,6 +83,11 @@ public class UsuarioService : IUsuarioService
 
     public async Task<UsuarioDto> CreateAsync(UsuarioCreateDto createDto)
     {
+        if (await _context.Usuarios.AnyAsync(u => u.Cedula == createDto.Cedula))
+        {
+            throw new InvalidOperationException("Ya existe un usuario registrado con esta cédula.");
+        }
+
         var usuario = new Usuario
         {
             Id = Guid.NewGuid(),
@@ -109,6 +114,11 @@ public class UsuarioService : IUsuarioService
     {
         var usuario = await _context.Usuarios.FindAsync(id);
         if (usuario == null) return null;
+
+        if (updateDto.Cedula != usuario.Cedula && await _context.Usuarios.AnyAsync(u => u.Cedula == updateDto.Cedula))
+        {
+            throw new InvalidOperationException("Ya existe un usuario registrado con esta cédula.");
+        }
 
         usuario.Nombre = updateDto.Nombre;
         usuario.Apellido = updateDto.Apellido;

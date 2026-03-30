@@ -53,9 +53,15 @@ public class UsuariosController : ControllerBase
             return BadRequest(ModelState);
         }
 
-        var usuario = await _usuarioService.CreateAsync(createDto);
-
-        return CreatedAtAction(nameof(GetUsuario), new { id = usuario.Id }, usuario);
+        try
+        {
+            var usuario = await _usuarioService.CreateAsync(createDto);
+            return CreatedAtAction(nameof(GetUsuario), new { id = usuario.Id }, usuario);
+        }
+        catch (InvalidOperationException ex)
+        {
+            return BadRequest(new { message = ex.Message });
+        }
     }
 
     [HttpPut("{id}")]
@@ -66,14 +72,21 @@ public class UsuariosController : ControllerBase
             return BadRequest(ModelState);
         }
 
-        var usuario = await _usuarioService.UpdateAsync(id, updateDto);
-
-        if (usuario == null)
+        try
         {
-            return NotFound();
-        }
+            var usuario = await _usuarioService.UpdateAsync(id, updateDto);
 
-        return NoContent();
+            if (usuario == null)
+            {
+                return NotFound();
+            }
+
+            return NoContent();
+        }
+        catch (InvalidOperationException ex)
+        {
+            return BadRequest(new { message = ex.Message });
+        }
     }
 
     [HttpDelete("{id}")]
