@@ -11,4 +11,5 @@ public interface IUsuarioService
     Task<UsuarioDto> CreateAsync(UsuarioCreateDto createDto);
     Task<UsuarioDto?> UpdateAsync(Guid id, UsuarioUpdateDto updateDto);
     Task<bool> DeleteAsync(Guid id);
+    Task<bool> CambiarPasswordAsync(Guid id, CambioPasswordDto dto);
 }

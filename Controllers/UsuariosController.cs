@@ -101,4 +101,28 @@ public class UsuariosController : ControllerBase
 
         return NoContent();
     }
+
+    [HttpPut("{id}/password")]
+    public async Task<IActionResult> CambiarPassword(Guid id, [FromBody] CambioPasswordDto dto)
+    {
+        if (!ModelState.IsValid)
+        {
+            return BadRequest(ModelState);
+        }
+
+        try
+        {
+            var result = await _usuarioService.CambiarPasswordAsync(id, dto);
+            if (!result)
+            {
+                return NotFound();
+            }
+
+            return Ok(new { message = "Contraseña actualizada exitosamente." });
+        }
+        catch (InvalidOperationException ex)
+        {
+            return BadRequest(new { message = ex.Message });
+        }
+    }
 }

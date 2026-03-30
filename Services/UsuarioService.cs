@@ -151,6 +151,22 @@ public class UsuarioService : IUsuarioService
         return true;
     }
 
+    public async Task<bool> CambiarPasswordAsync(Guid id, CambioPasswordDto dto)
+    {
+        var usuario = await _context.Usuarios.FindAsync(id);
+        if (usuario == null) return false;
+
+        bool isPasswordValid = BCrypt.Net.BCrypt.Verify(dto.ActualPassword, usuario.Password);
+        if (!isPasswordValid)
+        {
+            throw new InvalidOperationException("La contraseña actual es incorrecta.");
+        }
+
+        usuario.Password = BCrypt.Net.BCrypt.HashPassword(dto.NuevaPassword);
+        await _context.SaveChangesAsync();
+        return true;
+    }
+
     private static UsuarioDto MapToDto(Usuario usuario)
     {
         return new UsuarioDto
