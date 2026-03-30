@@ -72,16 +72,34 @@ public class ReporteIncidenciasDto
     public string? VehiculoColor { get; set; }
 
     public bool TieneTrancas { get; set; }
-    public string? TrancaPropiciaNombre { get; set; }
-    public string? TrancaLugar { get; set; }
-    public TimeSpan? TrancaDuracion { get; set; }
+    public List<OutputTrancaDto> Trancas { get; set; } = new();
 
     public bool TieneConflictos { get; set; }
-    public string? ConflictosExplicacion { get; set; }
+    public List<OutputConflictoDto> Conflictos { get; set; } = new();
 
     public bool TieneFugas { get; set; }
-    public string? FugaLugar { get; set; }
-    public string? FugaTipo { get; set; }
+    public List<OutputFugaDto> Fugas { get; set; } = new();
+}
+
+public class OutputTrancaDto
+{
+    public Guid Id { get; set; }
+    public string? PropiciaNombre { get; set; }
+    public string? Lugar { get; set; }
+    public TimeSpan? Duracion { get; set; }
+}
+
+public class OutputConflictoDto
+{
+    public Guid Id { get; set; }
+    public string? Explicacion { get; set; }
+}
+
+public class OutputFugaDto
+{
+    public Guid Id { get; set; }
+    public string? Lugar { get; set; }
+    public string? Tipo { get; set; }
 }
 
 public class ReporteSaludDto

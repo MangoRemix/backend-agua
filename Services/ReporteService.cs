@@ -208,6 +208,11 @@ public class ReporteService : IReporteService
     {
         var reporte = await _context.Reportes
             .Include(r => r.Incidencia)
+                .ThenInclude(i => i.Trancas)
+            .Include(r => r.Incidencia)
+                .ThenInclude(i => i.Conflictos)
+            .Include(r => r.Incidencia)
+                .ThenInclude(i => i.Fugas)
             .FirstOrDefaultAsync(r => r.Id == reporteId);
 
         if (reporte == null) return null;
@@ -221,19 +226,55 @@ public class ReporteService : IReporteService
         reporte.Incidencia.VehiculoColor = updateDto.TieneVentaIlegal ? updateDto.VehiculoColor : null;
 
         // Trancas
-        reporte.Incidencia.TieneTrancas = updateDto.TieneTrancas;
-        reporte.Incidencia.TrancaPropiciaNombre = updateDto.TieneTrancas ? updateDto.TrancaPropiciaNombre : null;
-        reporte.Incidencia.TrancaLugar = updateDto.TieneTrancas ? updateDto.TrancaLugar : null;
-        reporte.Incidencia.TrancaDuracion = updateDto.TieneTrancas ? updateDto.TrancaDuracion : null;
+        _context.Trancas.RemoveRange(reporte.Incidencia.Trancas);
+        reporte.Incidencia.Trancas.Clear();
+        reporte.Incidencia.TieneTrancas = updateDto.TieneTrancas || (updateDto.Trancas?.Any() ?? false);
+        if (updateDto.Trancas != null)
+        {
+            foreach (var trancaDto in updateDto.Trancas)
+            {
+                reporte.Incidencia.Trancas.Add(new Tranca
+                {
+                    ReporteIncidenciaId = reporte.Incidencia.Id,
+                    PropiciaNombre = trancaDto.PropiciaNombre,
+                    Lugar = trancaDto.Lugar,
+                    Duracion = trancaDto.Duracion
+                });
+            }
+        }
 
         // Conflictos
-        reporte.Incidencia.TieneConflictos = updateDto.TieneConflictos;
-        reporte.Incidencia.ConflictosExplicacion = updateDto.TieneConflictos ? updateDto.ConflictosExplicacion : null;
+        _context.Conflictos.RemoveRange(reporte.Incidencia.Conflictos);
+        reporte.Incidencia.Conflictos.Clear();
+        reporte.Incidencia.TieneConflictos = updateDto.TieneConflictos || (updateDto.Conflictos?.Any() ?? false);
+        if (updateDto.Conflictos != null)
+        {
+            foreach (var conflictoDto in updateDto.Conflictos)
+            {
+                reporte.Incidencia.Conflictos.Add(new Conflicto
+                {
+                    ReporteIncidenciaId = reporte.Incidencia.Id,
+                    Explicacion = conflictoDto.Explicacion
+                });
+            }
+        }
 
         // Fugas
-        reporte.Incidencia.TieneFugas = updateDto.TieneFugas;
-        reporte.Incidencia.FugaLugar = updateDto.TieneFugas ? updateDto.FugaLugar : null;
-        reporte.Incidencia.FugaTipo = updateDto.TieneFugas ? updateDto.FugaTipo : null;
+        _context.Fugas.RemoveRange(reporte.Incidencia.Fugas);
+        reporte.Incidencia.Fugas.Clear();
+        reporte.Incidencia.TieneFugas = updateDto.TieneFugas || (updateDto.Fugas?.Any() ?? false);
+        if (updateDto.Fugas != null)
+        {
+            foreach (var fugaDto in updateDto.Fugas)
+            {
+                reporte.Incidencia.Fugas.Add(new Fuga
+                {
+                    ReporteIncidenciaId = reporte.Incidencia.Id,
+                    Lugar = fugaDto.Lugar,
+                    Tipo = fugaDto.Tipo
+                });
+            }
+        }
 
         await _context.SaveChangesAsync();
         return await GetByIdAsync(reporte.Id);
@@ -554,6 +595,11 @@ public class ReporteService : IReporteService
             .Include(r => r.Suministro)
                 .ThenInclude(s => s.Tanques)
             .Include(r => r.Incidencia)
+                .ThenInclude(i => i.Trancas)
+            .Include(r => r.Incidencia)
+                .ThenInclude(i => i.Conflictos)
+            .Include(r => r.Incidencia)
+                .ThenInclude(i => i.Fugas)
             .Include(r => r.Salud)
                 .ThenInclude(s => s.PersonasAfectadas)
             .Include(r => r.Participacion)
@@ -633,14 +679,26 @@ public class ReporteService : IReporteService
                 VehiculoPlaca = reporte.Incidencia.VehiculoPlaca,
                 VehiculoColor = reporte.Incidencia.VehiculoColor,
                 TieneTrancas = reporte.Incidencia.TieneTrancas,
-                TrancaPropiciaNombre = reporte.Incidencia.TrancaPropiciaNombre,
-                TrancaLugar = reporte.Incidencia.TrancaLugar,
-                TrancaDuracion = reporte.Incidencia.TrancaDuracion,
+                Trancas = reporte.Incidencia.Trancas?.Select(t => new OutputTrancaDto
+                {
+                    Id = t.Id,
+                    PropiciaNombre = t.PropiciaNombre,
+                    Lugar = t.Lugar,
+                    Duracion = t.Duracion
+                }).ToList() ?? new List<OutputTrancaDto>(),
                 TieneConflictos = reporte.Incidencia.TieneConflictos,
-                ConflictosExplicacion = reporte.Incidencia.ConflictosExplicacion,
+                Conflictos = reporte.Incidencia.Conflictos?.Select(c => new OutputConflictoDto
+                {
+                    Id = c.Id,
+                    Explicacion = c.Explicacion
+                }).ToList() ?? new List<OutputConflictoDto>(),
                 TieneFugas = reporte.Incidencia.TieneFugas,
-                FugaLugar = reporte.Incidencia.FugaLugar,
-                FugaTipo = reporte.Incidencia.FugaTipo?.ToString()
+                Fugas = reporte.Incidencia.Fugas?.Select(f => new OutputFugaDto
+                {
+                    Id = f.Id,
+                    Lugar = f.Lugar,
+                    Tipo = f.Tipo?.ToString()
+                }).ToList() ?? new List<OutputFugaDto>()
             },
 
             Salud = reporte.Salud == null ? new ReporteSaludDto() : new ReporteSaludDto

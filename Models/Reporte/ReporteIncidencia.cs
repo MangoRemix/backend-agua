@@ -21,16 +21,13 @@ public class ReporteIncidencia
 
     // Trancas
     public bool TieneTrancas { get; set; }
-    public string? TrancaPropiciaNombre { get; set; }
-    public string? TrancaLugar { get; set; }
-    public TimeSpan? TrancaDuracion { get; set; }
+    public ICollection<Tranca> Trancas { get; set; } = new List<Tranca>();
 
     // Conflictos
     public bool TieneConflictos { get; set; }
-    public string? ConflictosExplicacion { get; set; }
+    public ICollection<Conflicto> Conflictos { get; set; } = new List<Conflicto>();
 
     // Fugas
     public bool TieneFugas { get; set; }
-    public string? FugaLugar { get; set; }
-    public CaudalAgua? FugaTipo { get; set; }
+    public ICollection<Fuga> Fugas { get; set; } = new List<Fuga>();
 }

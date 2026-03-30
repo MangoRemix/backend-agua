@@ -23,6 +23,9 @@ public class ApplicationDbContext : DbContext
     public DbSet<PersonaAfectada> PersonasAfectadas { get; set; }
     public DbSet<Cisterna> Cisternas { get; set; }
     public DbSet<Tanque> Tanques { get; set; }
+    public DbSet<Tranca> Trancas { get; set; }
+    public DbSet<Conflicto> Conflictos { get; set; }
+    public DbSet<Fuga> Fugas { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

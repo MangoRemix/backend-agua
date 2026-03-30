@@ -14,16 +14,34 @@ public class ReporteIncidenciasUpdateDto
 
     // Trancas
     public bool TieneTrancas { get; set; }
-    public string? TrancaPropiciaNombre { get; set; }
-    public string? TrancaLugar { get; set; }
-    public TimeSpan? TrancaDuracion { get; set; }
+    public List<TrancaDto> Trancas { get; set; } = new();
 
     // Conflictos
     public bool TieneConflictos { get; set; }
-    public string? ConflictosExplicacion { get; set; }
+    public List<ConflictoDto> Conflictos { get; set; } = new();
 
     // Fugas
     public bool TieneFugas { get; set; }
-    public string? FugaLugar { get; set; }
-    public CaudalAgua? FugaTipo { get; set; }
+    public List<FugaDto> Fugas { get; set; } = new();
+}
+
+public class TrancaDto
+{
+    public Guid? Id { get; set; }
+    public string? PropiciaNombre { get; set; }
+    public string? Lugar { get; set; }
+    public TimeSpan? Duracion { get; set; }
+}
+
+public class ConflictoDto
+{
+    public Guid? Id { get; set; }
+    public string? Explicacion { get; set; }
+}
+
+public class FugaDto
+{
+    public Guid? Id { get; set; }
+    public string? Lugar { get; set; }
+    public CaudalAgua? Tipo { get; set; }
 }
