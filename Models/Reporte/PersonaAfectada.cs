@@ -21,6 +21,5 @@ public class PersonaAfectada
     
     public string? Cedula { get; set; }
 
-    [Required]
-    public CondicionSalud Condicion { get; set; }
+    public List<CondicionSalud> Condiciones { get; set; } = new();
 }

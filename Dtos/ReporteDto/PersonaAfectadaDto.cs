@@ -9,5 +9,5 @@ public class PersonaAfectadaDto
     public string Apellido { get; set; } = string.Empty;
     public int Edad { get; set; }
     public string? Cedula { get; set; }
-    public CondicionSalud Condicion { get; set; }
+    public List<CondicionSalud> Condiciones { get; set; } = new();
 }

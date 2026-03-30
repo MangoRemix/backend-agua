@@ -274,12 +274,11 @@ public class ReporteService : IReporteService
         {
             foreach (var personaDto in updateDto.PersonasAfectadas)
             {
-                // Validar si la persona corresponde a una condición activa
-                bool esValida = false;
-                if (personaDto.Condicion == CondicionSalud.Diarrea && updateDto.TieneDiarrea) esValida = true;
-                if (personaDto.Condicion == CondicionSalud.Vomitos && updateDto.TieneVomitos) esValida = true;
-                if (personaDto.Condicion == CondicionSalud.DolorAbdominal && updateDto.TieneDolorAbdominal) esValida = true;
-                if (personaDto.Condicion == CondicionSalud.Todos && (updateDto.TieneDiarrea || updateDto.TieneVomitos || updateDto.TieneDolorAbdominal)) esValida = true;
+                // Validar si al menos una de las condiciones en la lista corresponde a una condición activa en el reporte
+                bool esValida = personaDto.Condiciones.Any(c => 
+                    (c == CondicionSalud.Diarrea && updateDto.TieneDiarrea) ||
+                    (c == CondicionSalud.Vomitos && updateDto.TieneVomitos) ||
+                    (c == CondicionSalud.DolorAbdominal && updateDto.TieneDolorAbdominal));
 
                 if (esValida)
                 {
@@ -290,7 +289,7 @@ public class ReporteService : IReporteService
                         Apellido = personaDto.Apellido,
                         Edad = personaDto.Edad,
                         Cedula = personaDto.Cedula,
-                        Condicion = personaDto.Condicion
+                        Condiciones = personaDto.Condiciones
                     });
                 }
             }
@@ -656,7 +655,7 @@ public class ReporteService : IReporteService
                     Apellido = p.Apellido,
                     Edad = p.Edad,
                     Cedula = p.Cedula,
-                    Condicion = p.Condicion
+                    Condiciones = p.Condiciones
                 }).ToList() ?? new List<PersonaAfectadaDto>()
             },
 
