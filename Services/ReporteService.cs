@@ -274,24 +274,25 @@ public class ReporteService : IReporteService
         {
             foreach (var personaDto in updateDto.PersonasAfectadas)
             {
-                // Validar si al menos una de las condiciones en la lista corresponde a una condición activa en el reporte
-                bool esValida = personaDto.Condiciones.Any(c => 
-                    (c == CondicionSalud.Diarrea && updateDto.TieneDiarrea) ||
-                    (c == CondicionSalud.Vomitos && updateDto.TieneVomitos) ||
-                    (c == CondicionSalud.DolorAbdominal && updateDto.TieneDolorAbdominal));
-
-                if (esValida)
+                // Agregamos la persona y activamos automáticamente las banderas de salud según sus condiciones
+                var nuevaPersona = new PersonaAfectada
                 {
-                    reporte.Salud.PersonasAfectadas.Add(new PersonaAfectada
-                    {
-                        ReporteSaludId = reporte.Salud.Id,
-                        Nombre = personaDto.Nombre,
-                        Apellido = personaDto.Apellido,
-                        Edad = personaDto.Edad,
-                        Cedula = personaDto.Cedula,
-                        Condiciones = personaDto.Condiciones
-                    });
+                    ReporteSaludId = reporte.Salud.Id,
+                    Nombre = personaDto.Nombre,
+                    Apellido = personaDto.Apellido,
+                    Edad = personaDto.Edad,
+                    Cedula = personaDto.Cedula,
+                    Condiciones = personaDto.Condiciones
+                };
+
+                foreach (var condicion in personaDto.Condiciones)
+                {
+                    if (condicion == CondicionSalud.Diarrea) reporte.Salud.TieneDiarrea = true;
+                    if (condicion == CondicionSalud.Vomitos) reporte.Salud.TieneVomitos = true;
+                    if (condicion == CondicionSalud.DolorAbdominal) reporte.Salud.TieneDolorAbdominal = true;
                 }
+
+                reporte.Salud.PersonasAfectadas.Add(nuevaPersona);
             }
         }
 
