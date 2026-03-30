@@ -1,7 +1,9 @@
 using backend_agua.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace backend_agua.Models;
 
+[Index(nameof(Cedula), IsUnique = true)]
 public class Usuario
 {
     public Guid Id { get; set; }
