@@ -319,6 +319,10 @@ public class ReporteService : IReporteService
         
         if (updateDto.PersonasAfectadas != null)
         {
+            int conteoDiarrea = 0;
+            int conteoVomitos = 0;
+            int conteoDolorAbdominal = 0;
+
             foreach (var personaDto in updateDto.PersonasAfectadas)
             {
                 // Agregamos la persona y activamos automáticamente las banderas de salud según sus condiciones
@@ -334,13 +338,35 @@ public class ReporteService : IReporteService
 
                 foreach (var condicion in personaDto.Condiciones)
                 {
-                    if (condicion == CondicionSalud.Diarrea) reporte.Salud.TieneDiarrea = true;
-                    if (condicion == CondicionSalud.Vomitos) reporte.Salud.TieneVomitos = true;
-                    if (condicion == CondicionSalud.DolorAbdominal) reporte.Salud.TieneDolorAbdominal = true;
+                    if (condicion == CondicionSalud.Diarrea) 
+                    {
+                        reporte.Salud.TieneDiarrea = true;
+                        conteoDiarrea++;
+                    }
+                    if (condicion == CondicionSalud.Vomitos) 
+                    {
+                        reporte.Salud.TieneVomitos = true;
+                        conteoVomitos++;
+                    }
+                    if (condicion == CondicionSalud.DolorAbdominal) 
+                    {
+                        reporte.Salud.TieneDolorAbdominal = true;
+                        conteoDolorAbdominal++;
+                    }
                 }
 
                 reporte.Salud.PersonasAfectadas.Add(nuevaPersona);
             }
+
+            // Actualizar la cantidad de casos, si el conteo de personas afectadas es mayor
+            if (conteoDiarrea > reporte.Salud.CantidadCasosDiarrea)
+                reporte.Salud.CantidadCasosDiarrea = conteoDiarrea;
+                
+            if (conteoVomitos > reporte.Salud.CantidadCasosVomitos)
+                reporte.Salud.CantidadCasosVomitos = conteoVomitos;
+
+            if (conteoDolorAbdominal > reporte.Salud.CantidadCasosDolorAbdominal)
+                reporte.Salud.CantidadCasosDolorAbdominal = conteoDolorAbdominal;
         }
 
         await _context.SaveChangesAsync();
