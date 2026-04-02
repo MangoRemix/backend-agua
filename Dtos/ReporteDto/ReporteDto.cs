@@ -110,6 +110,7 @@ public class ReporteSaludDto
     public int CantidadCasosVomitos { get; set; }
     public bool TieneDolorAbdominal { get; set; }
     public int CantidadCasosDolorAbdominal { get; set; }
+    public int CantidadDeNinos { get; set; }
     public List<PersonaAfectadaDto> PersonasAfectadas { get; set; } = new();
 }
 

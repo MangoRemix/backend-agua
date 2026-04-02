@@ -750,6 +750,7 @@ public class ReporteService : IReporteService
                 CantidadCasosVomitos = Math.Max(reporte.Salud.CantidadCasosVomitos, reporte.Salud.PersonasAfectadas?.Count(p => p.Condiciones.Contains(CondicionSalud.Vomitos)) ?? 0),
                 TieneDolorAbdominal = reporte.Salud.TieneDolorAbdominal,
                 CantidadCasosDolorAbdominal = Math.Max(reporte.Salud.CantidadCasosDolorAbdominal, reporte.Salud.PersonasAfectadas?.Count(p => p.Condiciones.Contains(CondicionSalud.DolorAbdominal)) ?? 0),
+                CantidadDeNinos = reporte.Salud.PersonasAfectadas?.Count(p => p.Edad <= 11) ?? 0,
                 PersonasAfectadas = reporte.Salud.PersonasAfectadas?.Select(p => new PersonaAfectadaDto
                 {
                     Nombre = p.Nombre,
