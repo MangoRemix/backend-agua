@@ -5,6 +5,9 @@ namespace backend_agua.Dtos.Reporte;
 public class ComunaDashboardDto
 {
     public string ComunaNombre { get; set; } = string.Empty;
+    public string? ComunaLiderNombre { get; set; }
+    public string? ComunaLiderCedula { get; set; }
+    public string? ComunaLiderTlf { get; set; }
     public int TotalComunidades { get; set; }
     public int EnviadosHoy { get; set; }
     public int PendientesHoy => TotalComunidades - EnviadosHoy;

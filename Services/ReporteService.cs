@@ -612,6 +612,9 @@ public class ReporteService : IReporteService
         return new ComunaDashboardDto
         {
             ComunaNombre = comuna.Nombre,
+            ComunaLiderNombre = comuna.LiderNombre,
+            ComunaLiderCedula = comuna.LiderCedula,
+            ComunaLiderTlf = comuna.LiderTlf,
             TotalComunidades = comuna.Comunidades.Count,
             EnviadosHoy = comunidadStatusList.Count(c => c.Status == "RECIBIDO"),
             ListadoComunidades = new backend_agua.Dtos.Common.PagedResult<ComunidadStatusDto>
