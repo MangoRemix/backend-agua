@@ -745,11 +745,11 @@ public class ReporteService : IReporteService
             Salud = reporte.Salud == null ? new ReporteSaludDto() : new ReporteSaludDto
             {
                 TieneDiarrea = reporte.Salud.TieneDiarrea,
-                CantidadCasosDiarrea = reporte.Salud.CantidadCasosDiarrea,
+                CantidadCasosDiarrea = Math.Max(reporte.Salud.CantidadCasosDiarrea, reporte.Salud.PersonasAfectadas?.Count(p => p.Condiciones.Contains(CondicionSalud.Diarrea)) ?? 0),
                 TieneVomitos = reporte.Salud.TieneVomitos,
-                CantidadCasosVomitos = reporte.Salud.CantidadCasosVomitos,
+                CantidadCasosVomitos = Math.Max(reporte.Salud.CantidadCasosVomitos, reporte.Salud.PersonasAfectadas?.Count(p => p.Condiciones.Contains(CondicionSalud.Vomitos)) ?? 0),
                 TieneDolorAbdominal = reporte.Salud.TieneDolorAbdominal,
-                CantidadCasosDolorAbdominal = reporte.Salud.CantidadCasosDolorAbdominal,
+                CantidadCasosDolorAbdominal = Math.Max(reporte.Salud.CantidadCasosDolorAbdominal, reporte.Salud.PersonasAfectadas?.Count(p => p.Condiciones.Contains(CondicionSalud.DolorAbdominal)) ?? 0),
                 PersonasAfectadas = reporte.Salud.PersonasAfectadas?.Select(p => new PersonaAfectadaDto
                 {
                     Nombre = p.Nombre,
